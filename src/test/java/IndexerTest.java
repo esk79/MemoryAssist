@@ -1,6 +1,9 @@
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import searchengine.Category;
+import searchengine.Indexer;
+import models.Resource;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

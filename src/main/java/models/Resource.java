@@ -1,7 +1,11 @@
+package models;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import searchengine.Category;
+import util.LuceneConstants;
 
 import java.util.StringJoiner;
 
@@ -23,7 +27,6 @@ public class Resource {
     public Document getDocument() {
         Document document = new Document();
 
-        //TODO: handle better way of getting string value of enum
         StringField categoryField = new StringField(LuceneConstants.CATEGORY,
                 category.name(), Field.Store.YES);
 

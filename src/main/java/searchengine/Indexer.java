@@ -1,3 +1,6 @@
+package searchengine;
+
+import models.Resource;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -13,19 +16,15 @@ import java.util.ArrayList;
  * Created by EvanKing on 7/12/17.
  */
 public class Indexer {
-    private static String INDEX_PATH;
-
     private IndexWriter writer;
 
     public Indexer(Path indexDirectoryPath) throws IOException {
         //this directory will contain the indexes
         Directory indexDirectory = FSDirectory.open(indexDirectoryPath);
 
-        //create the indexer
-        //TODO: Construct a legitimate analyzer
+        //create the indexer with a standard analyzer
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new StandardAnalyzer());
         writer = new IndexWriter(indexDirectory, indexWriterConfig);
-
     }
 
 

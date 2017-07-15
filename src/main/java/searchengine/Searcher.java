@@ -1,6 +1,7 @@
+package searchengine;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -10,10 +11,10 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import util.LuceneConstants;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.ParseException;
 
 /**
  * Created by EvanKing on 7/12/17.
@@ -33,8 +34,7 @@ public class Searcher {
     }
 
     public TopDocs search(String searchQuery)
-            throws IOException, ParseException, org.apache.lucene.queryparser.classic.ParseException {
-
+            throws IOException, org.apache.lucene.queryparser.classic.ParseException {
         Query query = queryParser.parse(searchQuery);
         TopDocs topDocs = indexSearcher.search(query, LuceneConstants.MAX_NUMBER_OF_RESULTS);
         return topDocs;
@@ -42,7 +42,7 @@ public class Searcher {
 
 
     public Document getDocument(ScoreDoc scoreDoc)
-            throws CorruptIndexException, IOException {
+            throws IOException {
         return indexSearcher.doc(scoreDoc.doc);
     }
 
