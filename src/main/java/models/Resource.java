@@ -5,7 +5,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import searchengine.Category;
-import util.LuceneConstants;
+import utils.LuceneConstants;
 
 import java.util.StringJoiner;
 

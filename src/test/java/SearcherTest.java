@@ -3,7 +3,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.junit.Before;
 import org.junit.Test;
-import util.LuceneConstants;
+import utils.LuceneConstants;
 import searchengine.Searcher;
 
 import java.nio.file.Path;
