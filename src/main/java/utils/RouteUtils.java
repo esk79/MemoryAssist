@@ -1,6 +1,7 @@
 package utils;
 
 import spark.Request;
+import spark.Route;
 import spark.Session;
 import spark.TemplateViewRoute;
 
@@ -30,11 +31,48 @@ public class RouteUtils {
         return mapModelAndView;
     }
 
+    public Route route(Route route) {
+        return (request, response) -> {
+            try {
+                return route.handle(request, response);
+            } catch (NotLoggedInException e) {
+                response.status(403);
+                return "";
+            } catch (InvalidParamException e) {
+                response.status(400);
+                return e.getMessage();
+            }
+        };
+    }
+
+    public static boolean queryParamExists(Request request, String paramName) {
+        return request.queryParams().contains(paramName);
+    }
+
+    public static String queryParam(Request request, String paramName)
+            throws InvalidParamException {
+        String value = request.queryParams(paramName);
+        if (value == null) {
+            String msg = String.format("Parameter %s expected, but not found", paramName);
+            throw new InvalidParamException(msg);
+        }
+        return value;
+    }
+
     public boolean userIsLoggedIn(Request request)
             throws SQLException {
 //        Boolean loggedIn = request.session().attribute("loggedIn");
         //TODO:
         return false;
+    }
+
+    public static class NotLoggedInException extends Exception {
+    }
+
+    public static class InvalidParamException extends Exception {
+        public InvalidParamException(String message) {
+            super(message);
+        }
     }
 
 }

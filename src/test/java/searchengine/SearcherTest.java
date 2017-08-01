@@ -1,10 +1,11 @@
+package searchengine;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.junit.Before;
 import org.junit.Test;
 import utils.LuceneConstants;
-import searchengine.Searcher;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
