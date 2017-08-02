@@ -51,4 +51,7 @@ fabric.properties
 #Custom
 src/main/resources/properties/server.properties
 
-target/*
+.classpath
+.project
+.settings/
+target/
