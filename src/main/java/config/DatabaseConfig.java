@@ -25,16 +25,16 @@ public final class DatabaseConfig {
     //TODO: Logging
     public void dbInit() {
         System.out.println("[!] Initializing database");
-//        LOGGER.info("[!] Initializing database");
         try (Connection connection = connectionProvider.getConnection()) {
             setUp(connection);
-        } catch (SQLException e) {
-//            LOGGER.severe(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("[-] Error " + e.getMessage());
         }
     }
 
     public static void setUp(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
+            System.out.println("[!] Creating table");
             statement.executeUpdate(Statements.CREATE_AUTHENTICATION_TABLE);
         }
     }

@@ -1,8 +1,12 @@
 package controllers;
 
 import com.google.inject.Inject;
+import spark.ModelAndView;
+import spark.Request;
+import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 import utils.RouteUtils;
+import utils.RouteWrapper;
 
 import static spark.Spark.get;
 import static spark.Spark.notFound;
@@ -19,7 +23,8 @@ public class IndexController extends AbstractController {
 
     // Basic route controller to serve homepage
     public void init() {
-        get("/", routeUtils.template("index.ftl"), new FreeMarkerEngine());
+        RouteWrapper routeWrapper = new RouteWrapper();
+        get("/", routeWrapper.templateWrapper(this::indexPage), new FreeMarkerEngine());
 
         get("/404", routeUtils.template("404.ftl"), new FreeMarkerEngine());
 
@@ -27,6 +32,12 @@ public class IndexController extends AbstractController {
             response.redirect("/404");
             return "Redirected";
         });
+    }
+
+    ModelAndView indexPage(Request request, Response response) throws Exception {
+        routeUtils.forceAuthentication(request);
+
+        return routeUtils.modelAndView(request, "index.ftl").get();
     }
 
 }

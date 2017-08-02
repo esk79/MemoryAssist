@@ -14,12 +14,10 @@ public final class Statements {
     public static final String DB_NAME = "memoryassist";
     public static final String CREATE_AUTHENTICATION_TABLE = "CREATE TABLE IF NOT EXISTS authenticator ("
             + "salt varbinary(32) NOT NULL,"
-            + "hash varbinary(2048) NOT NULL,"
+            + "hash varbinary(2048) NOT NULL"
             + ")";
 
-    public static final String GET_PASSWORD_HASH = "SELECT hash FROM authenticator";
-    public static final String GET_PASSWORD_SALT = "SELECT salt FROM authenticator";
-
+    public static final String GET_AUTHENTICATOR = "SELECT * FROM authenticator";
 
     private static PreparedStatementProvider provider(String query,
                                                       Populator populator) throws SQLException {
@@ -33,6 +31,16 @@ public final class Statements {
                 throw e;
             }
         };
+    }
+
+
+    public static PreparedStatementProvider insertAuthentication(byte[] salt, byte[] hashedPassword) throws SQLException {
+        return provider("INSERT INTO authenticator (salt, hash) VALUES (?, ?)",
+                statement -> {
+                    statement.setBytes(1, salt);
+                    statement.setBytes(2, hashedPassword);
+                }
+        );
     }
 
     //TODO: Understand this

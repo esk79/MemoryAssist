@@ -6,3 +6,38 @@ body {
 .padding-top {
     padding-top: 70px;
 }
+
+
+/* center search */
+
+.global-input {
+    text-align:center;
+    padding:10px;
+}
+.global-input * {
+    display:inline-block;
+    margin-bottom:0;
+}
+
+.global-input .form-control {
+    width:120px;
+}
+
+.global-input a {
+    display:block;
+    padding-top:10px;
+}
+
+
+
+@media (min-width:400px){
+    .global-input {
+        padding: 50px 0;
+        text-align:center;
+    }
+
+    .global-input .form-control {
+        width:300px;
+    }
+
+}

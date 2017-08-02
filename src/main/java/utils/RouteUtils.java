@@ -1,11 +1,9 @@
 package utils;
 
-import spark.Request;
-import spark.Route;
-import spark.Session;
-import spark.TemplateViewRoute;
+import spark.*;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * Created by EvanKing on 7/19/17.
@@ -21,7 +19,6 @@ public class RouteUtils {
 
         Session session = request.session();
         MapModelAndView mapModelAndView = new MapModelAndView(viewName)
-                .add("loggedIn", userIsLoggedIn(request))
                 .addIfNonNull("error", session.attribute("error"))
                 .addIfNonNull("alert", session.attribute("alert"))
                 .addIfNonNull("success", session.attribute("success"));
@@ -35,7 +32,7 @@ public class RouteUtils {
         return (request, response) -> {
             try {
                 return route.handle(request, response);
-            } catch (NotLoggedInException e) {
+            } catch (NotAuthenticatedException e) {
                 response.status(403);
                 return "";
             } catch (InvalidParamException e) {
@@ -59,14 +56,29 @@ public class RouteUtils {
         return value;
     }
 
-    public boolean userIsLoggedIn(Request request)
+    public boolean userAuthenticated(Request request)
             throws SQLException {
-//        Boolean loggedIn = request.session().attribute("loggedIn");
-        //TODO:
+        Boolean isAuthenticated = request.session().attribute("authenticated");
+        if (isAuthenticated != null && isAuthenticated){
+            return true;
+        }
         return false;
     }
 
-    public static class NotLoggedInException extends Exception {
+    public void forceAuthentication(Request request)
+            throws NotAuthenticatedException, SQLException {
+       if (!userAuthenticated(request)){
+           throw new NotAuthenticatedException();
+       }
+    }
+
+    public static ModelAndView redirectTo(Response response, String path) {
+        response.redirect(path);
+        // return whatever, will be overridden by the redirect
+        return new ModelAndView(new HashMap<String, Object>(), "");
+    }
+
+    public static class NotAuthenticatedException extends Exception {
     }
 
     public static class InvalidParamException extends Exception {

@@ -4,21 +4,15 @@
 <!-- Page Content -->
 <div class="container">
 
-    <div class="row padding-top">
-        <div class="col-md-4 col-md-offset-4">
-            <form action="/login" method="post" id="loginform">
-                <div class="row">
-                    <div class="form-group password-form-group">
-                        <input type="password" class="form-control" placeholder="Password">
-                    </div>
-                    <input type="hidden" class="hidden-password" name="password">
-                </div>
-                <div class="row text-center">
-                    <input class="btn btn-primary submit-button" type="submit" value="Authenticate">
-                </div>
-            </form>
+    <form action="/authenticate" method="post" class="form-inline global-input" role="form">
+        <div class="form-group">
+            <input type="password" class="form-control" id="k" name="password" placeholder="Password">
         </div>
-    </div>
+        <button type="submit" id="s" class="btn btn-default"><span class="glyphicon glyphicon-lock"></span>
+        </button>
+
+    </form>
+
 </div>
 
 
