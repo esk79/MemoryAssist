@@ -72,6 +72,19 @@ public class RouteUtils {
        }
     }
 
+    public static void successMessage(Request request, String message) {
+        request.session().attribute("success", message);
+    }
+
+    public static void alertMessage(Request request, String message) {
+        request.session().attribute("alert", message);
+    }
+
+    public static void errorMessage(Request request, String message) {
+        request.session().attribute("error", message);
+    }
+
+
     public static ModelAndView redirectTo(Response response, String path) {
         response.redirect(path);
         // return whatever, will be overridden by the redirect

@@ -1,5 +1,7 @@
 package searchengine;
 
+import annotations.IndexDirectoryString;
+import com.google.inject.Inject;
 import models.Resource;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -10,6 +12,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +21,10 @@ import java.util.ArrayList;
 public class Indexer {
     private IndexWriter writer;
 
-    public Indexer(Path indexDirectoryPath) throws IOException {
+    @Inject
+    public Indexer(@IndexDirectoryString String indexDirectoryString) throws IOException {
+        Path indexDirectoryPath = Paths.get(indexDirectoryString);
+
         //this directory will contain the indexes
         Directory indexDirectory = FSDirectory.open(indexDirectoryPath);
 
@@ -28,18 +34,15 @@ public class Indexer {
     }
 
 
-    private void indexResource(Resource resource) {
+    public void addNewResource(Resource resource) throws IOException {
+        System.out.println("Here");
         Document document = resource.getDocument();
-        try {
-            writer.addDocument(document);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writer.addDocument(document);
     }
 
-    public int createIndex(ArrayList<Resource> resources) {
+    public int createIndex(ArrayList<Resource> resources) throws IOException {
         for (Resource resource : resources) {
-            indexResource(resource);
+            addNewResource(resource);
         }
         return writer.numDocs();
     }

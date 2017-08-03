@@ -42,18 +42,35 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Memory Assistant</a>
+            <a class="navbar-brand" href=".">Memory Assistant</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Home</a></li>
-                <li><a href="/authenticate">Authenticate</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="/add">Add</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->
     </div>
 </nav>
+<div class="container" style="padding-top: 10px;">
+    <#if success??>
+        <div class="alert alert-success">
+            <strong>Success!</strong> ${success}
+        </div>
+    </#if>
+    <#if alert??>
+        <div class="alert alert-warning">
+            <strong>Alert!</strong> ${alert}
+        </div>
+    </#if>
+    <#if error??>
+        <div class="alert alert-danger">
+            <strong>Error!</strong> ${error}
+        </div>
+    </#if>
+</div>
+
 
     <#nested/>
 

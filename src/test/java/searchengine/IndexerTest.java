@@ -5,8 +5,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -21,10 +19,10 @@ public class IndexerTest {
 
     @Before
     public void setUp() throws Exception {
-        Resource resource1 = new Resource(Category.ERROR, "This is an error", "This is a document with things in it");
-        Resource resource2 = new Resource(Category.PEOPLE, "Samantha King", "My sister. She is a nurse and works in Seattle.");
-        Resource resource3 = new Resource(Category.QUESTION, "How to start the production server", "Run the startup script located at this url in the company wiki");
-        Resource resource4 = new Resource(Category.QUESTION, "How to start the local server", "Run the startup script located at this url in the company wiki");
+        Resource resource1 = new Resource("This is an error", "This is a document with things in it");
+        Resource resource2 = new Resource("Samantha King", "My sister. She is a nurse and works in Seattle.");
+        Resource resource3 = new Resource("How to start the production server", "Run the startup script located at this url in the company wiki");
+        Resource resource4 = new Resource("How to start the local server", "Run the startup script located at this url in the company wiki");
 
         resources.add(resource1);
         resources.add(resource2);
@@ -32,8 +30,7 @@ public class IndexerTest {
         resources.add(resource4);
 
 
-        Path indexDirectory = Paths.get("src/test/resources/index");
-        indexer = new Indexer(indexDirectory);
+        indexer = new Indexer("src/test/resources/index");
         indexer.deleteAll();
     }
 

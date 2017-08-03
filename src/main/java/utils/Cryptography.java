@@ -11,9 +11,13 @@ import java.security.spec.KeySpec;
  */
 public class Cryptography {
 
+    private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
+    private static final int ITERATION_COUNT = 65536;
+    private static final int KEY_LENGTH = 256;
+
     public static byte[] hash(byte[] salt, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH);
+        SecretKeyFactory f = SecretKeyFactory.getInstance(ALGORITHM);
         byte[] hash = f.generateSecret(spec).getEncoded();
         return hash;
     }

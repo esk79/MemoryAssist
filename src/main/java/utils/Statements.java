@@ -16,6 +16,13 @@ public final class Statements {
             + "salt varbinary(32) NOT NULL,"
             + "hash varbinary(2048) NOT NULL"
             + ")";
+    public static final String CREATE_RESOURCE_TABLE = "CREATE TABLE IF NOT EXISTS resource ("
+            + "id int NOT NULL AUTO_INCREMENT,"
+            + "title varchar(512) NOT NULL,"
+            + "markdown text NOT NULL,"
+            + "PRIMARY KEY (id),"
+            + "UNIQUE (title)"
+            + ")";
 
     public static final String GET_AUTHENTICATOR = "SELECT * FROM authenticator";
 
@@ -35,7 +42,7 @@ public final class Statements {
 
 
     public static PreparedStatementProvider insertAuthentication(byte[] salt, byte[] hashedPassword) throws SQLException {
-        return provider("INSERT INTO authenticator (salt, hash) VALUES (?, ?)",
+        return provider("INSERT INTO authenticator (title, markdown) VALUES (?, ?)",
                 statement -> {
                     statement.setBytes(1, salt);
                     statement.setBytes(2, hashedPassword);
@@ -43,7 +50,23 @@ public final class Statements {
         );
     }
 
-    //TODO: Understand this
+    //TODO: refactor these
+    public static PreparedStatementProvider insertResource(String title, String markdown) throws SQLException {
+        return provider("INSERT INTO resource (title, markdown) VALUES (?, ?)",
+                statement -> {
+                    statement.setString(1, title);
+                    statement.setString(2, markdown);
+                }
+        );
+    }
+
+    public static PreparedStatementProvider getResource(int resourceID)
+            throws SQLException {
+        return provider("SELECT * FROM resource WHERE id = ?",
+                statement -> statement.setInt(1, resourceID)
+        );
+    }
+
     @FunctionalInterface
     public interface PreparedStatementProvider {
         PreparedStatement get(Connection conn) throws SQLException;

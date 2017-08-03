@@ -1,5 +1,7 @@
 package searchengine;
 
+import annotations.IndexDirectoryString;
+import com.google.inject.Inject;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -15,6 +17,7 @@ import utils.LuceneConstants;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by EvanKing on 7/12/17.
@@ -24,8 +27,10 @@ public class Searcher {
     IndexSearcher indexSearcher;
     QueryParser queryParser;
 
-    public Searcher(Path indexDirectoryPath)
+    @Inject
+    public Searcher(@IndexDirectoryString String indexDirectoryString)
             throws IOException {
+        Path indexDirectoryPath = Paths.get(indexDirectoryString);
         Directory indexDirectory = FSDirectory.open(indexDirectoryPath);
         IndexReader reader = DirectoryReader.open(indexDirectory);
         indexSearcher = new IndexSearcher(reader);

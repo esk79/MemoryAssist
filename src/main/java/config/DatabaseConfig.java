@@ -36,6 +36,7 @@ public final class DatabaseConfig {
         try (Statement statement = connection.createStatement()) {
             System.out.println("[!] Creating table");
             statement.executeUpdate(Statements.CREATE_AUTHENTICATION_TABLE);
+            statement.executeUpdate(Statements.CREATE_RESOURCE_TABLE);
         }
     }
 }

@@ -1,8 +1,10 @@
 import annotations.DatabasePassword;
+import annotations.IndexDirectoryString;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import config.DatabaseConfig;
+import controllers.AddResourceController;
 import controllers.AuthenticationController;
 import controllers.IndexController;
 import utils.ConnectionProvider;
@@ -28,6 +30,8 @@ public class Application {
         Injector injector = Guice.createInjector(new Module());
         injector.getInstance(IndexController.class).init();
         injector.getInstance(AuthenticationController.class).init();
+        injector.getInstance(AddResourceController.class).init();
+
         injector.getInstance(DatabaseConfig.class).dbInit();
 
         return true;
@@ -40,6 +44,8 @@ public class Application {
         try {
             serverPort = Integer.parseInt(IOUtils.getPropertyFromPropertiesFile(serverProp, "serverPort"));
             Module.DB_PASSWORD = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePassword");
+            Module.INDEX_DIRECTORY_PATH = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
+
         } catch (IOException | NumberFormatException e) {
             System.err.printf(String.format("Error: %s", e.getMessage()));
             return false;
@@ -60,6 +66,7 @@ public class Application {
 
     private static class Module extends AbstractModule {
         private static String DB_PASSWORD = null;
+        private static String INDEX_DIRECTORY_PATH = null;
 
         @Override
         protected void configure() {
@@ -68,7 +75,14 @@ public class Application {
             if (DB_PASSWORD == null) {
                 throw new IllegalStateException("DB_PASSWORD not initialized");
             }
+
+            if (INDEX_DIRECTORY_PATH == null) {
+                throw new IllegalStateException("INDEX_DIRECTORY_PATH not initialized");
+            }
+
             bind(String.class).annotatedWith(DatabasePassword.class).toInstance(DB_PASSWORD);
+            bind(String.class).annotatedWith(IndexDirectoryString.class).toInstance(INDEX_DIRECTORY_PATH);
+
         }
     }
 }
