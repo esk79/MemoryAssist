@@ -34,7 +34,7 @@ public class Resource {
         TextField titleField = new TextField(LuceneConstants.TITLE,
                 title, Field.Store.YES);
 
-        TextField documentContentField = new TextField(LuceneConstants.DOCUMENT_CONTENT,
+        TextField documentContentField = new TextField(LuceneConstants.MARKDOWN,
                 markdown, Field.Store.YES);
 
         // defaultContentField is used as the default search field as to search all fields of the resource

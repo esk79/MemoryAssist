@@ -33,11 +33,10 @@ public class Indexer {
         writer = new IndexWriter(indexDirectory, indexWriterConfig);
     }
 
-
     public void addNewResource(Resource resource) throws IOException {
-        System.out.println("Here");
         Document document = resource.getDocument();
         writer.addDocument(document);
+        commit();
     }
 
     public int createIndex(ArrayList<Resource> resources) throws IOException {
@@ -50,6 +49,14 @@ public class Indexer {
     public void deleteAll() {
         try {
             writer.deleteAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void commit() {
+        try {
+            writer.commit();
         } catch (IOException e) {
             e.printStackTrace();
         }

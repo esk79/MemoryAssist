@@ -7,6 +7,7 @@ import config.DatabaseConfig;
 import controllers.AddResourceController;
 import controllers.AuthenticationController;
 import controllers.IndexController;
+import controllers.SearchController;
 import utils.ConnectionProvider;
 import utils.IOUtils;
 import utils.ProductionConnectionProvider;
@@ -31,6 +32,7 @@ public class Application {
         injector.getInstance(IndexController.class).init();
         injector.getInstance(AuthenticationController.class).init();
         injector.getInstance(AddResourceController.class).init();
+        injector.getInstance(SearchController.class).init();
 
         injector.getInstance(DatabaseConfig.class).dbInit();
 
@@ -45,7 +47,6 @@ public class Application {
             serverPort = Integer.parseInt(IOUtils.getPropertyFromPropertiesFile(serverProp, "serverPort"));
             Module.DB_PASSWORD = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePassword");
             Module.INDEX_DIRECTORY_PATH = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
-
         } catch (IOException | NumberFormatException e) {
             System.err.printf(String.format("Error: %s", e.getMessage()));
             return false;

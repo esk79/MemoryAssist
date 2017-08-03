@@ -1,14 +1,10 @@
 package searchengine;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import models.Resource;
 import org.junit.Before;
 import org.junit.Test;
-import utils.LuceneConstants;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,33 +17,31 @@ public class SearcherTest {
 
     @Before
     public void setUp() throws Exception {
-        Path indexDirectory = Paths.get("src/test/resources/index");
-        searcher = new Searcher(indexDirectory);
+        searcher = new Searcher("src/test/resources/index");
     }
 
     @Test
     public void testSearchWithEmptyResult() throws Exception {
-        TopDocs hits = searcher.search("zhaljkahsdf");
+        List<Resource> resources = searcher.search("zhaljkahsdf");
         // Should not return any totalHits because "zhaljkahsdf" not in any documents
-        assertEquals(0, hits.totalHits);
+        assertEquals(0, resources.size());
     }
 
     @Test
     public void testSearchReturnsCorrectResult() throws Exception {
-        TopDocs hits = searcher.search("sister");
+        List<Resource> resources = searcher.search("sister");
         // Should only return a hit on the document with sister in it
-        assertEquals(1, hits.totalHits);
+        assertEquals(1, resources.size());
 
-        for(ScoreDoc scoreDoc : hits.scoreDocs) {
-            Document doc = searcher.getDocument(scoreDoc);
-            assertEquals("Samantha King", doc.getField(LuceneConstants.TITLE).stringValue());
+        for(Resource resource : resources) {
+            assertEquals("Samantha King", resource.getTitle());
         }
     }
 
     @Test
     public void testSearchReturnsCorrectMultipleResult() throws Exception {
-        TopDocs hits = searcher.search("how do i start the server");
+        List<Resource> resources = searcher.search("how do i start the server");
         // Should return a hit on two document with "how to start" in them
-        assertEquals(2, hits.totalHits);
+        assertEquals(2, resources.size());
     }
 }

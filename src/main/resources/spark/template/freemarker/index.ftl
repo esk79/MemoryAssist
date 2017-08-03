@@ -4,11 +4,9 @@
 <!-- Page Content -->
 <div class="container">
 
-    <form class="form-inline global-input" role="form">
+    <form action="/search" method="post" class="form-inline global-input" role="form">
         <div class="form-group">
-            <label class="sr-only" for="">Enter search terms</label>
-            <input type="search" class="form-control" id="k" name="k" placeholder="Enter search terms">
-            <input id="cn" name="cn" type="hidden" value="false"/>
+            <input type="search" class="form-control" name="search" placeholder="Enter search terms">
         </div>
         <button type="submit" id="s" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
 
