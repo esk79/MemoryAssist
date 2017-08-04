@@ -48,12 +48,13 @@ public class Searcher {
         return resourceList;
     }
 
-    private List<Resource> convertTopDocsToResourceList(TopDocs topDocs) {
+    //TODO: make private
+    public List<Resource> convertTopDocsToResourceList(TopDocs topDocs) {
         List<Resource> result = new ArrayList<>();
 
         if (topDocs != null) {
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                Document doc = getDocument(scoreDoc);
+                Document doc = getDocumentFromScoreDoc(scoreDoc);
                 result.add(convertDocumentToResource(doc));
             }
         }
@@ -64,31 +65,40 @@ public class Searcher {
         assert doc != null;
         String title = doc.get(LuceneConstants.TITLE);
         String markdown = doc.get(LuceneConstants.MARKDOWN);
-        return new Resource(title, markdown);
+        String uid = doc.get(LuceneConstants.UID);
+        return new Resource(title, markdown, uid);
     }
 
-    private TopDocs searchHelper(String searchQuery) {
+    private TopDocs searchHelper(String searchTerms) {
         Query query;
         TopDocs topDocs;
         try {
-            query = queryParser.parse(searchQuery);
+            query = queryParser.parse(searchTerms);
             topDocs = indexSearcher.search(query, LuceneConstants.MAX_NUMBER_OF_RESULTS);
         } catch (ParseException | IOException e) {
             e.printStackTrace();
             return null;
         }
-
         return topDocs;
     }
 
 
-    public Document getDocument(ScoreDoc scoreDoc) {
+    public Document getDocumentFromScoreDoc(ScoreDoc scoreDoc) {
         try {
             return indexSearcher.doc(scoreDoc.doc);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Resource getResourceByUID(String uid) throws IOException, ParseException {
+        QueryParser queryParser = new QueryParser(LuceneConstants.UID,
+                new StandardAnalyzer());
+        Query query = queryParser.parse(uid);
+        TopDocs topdoc = indexSearcher.search(query, 1);
+        List<Resource> result = convertTopDocsToResourceList(topdoc);
+        return result.get(0);
     }
 
 }

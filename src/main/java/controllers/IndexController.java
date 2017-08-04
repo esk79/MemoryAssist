@@ -32,6 +32,7 @@ public class IndexController extends AbstractController {
             response.redirect("/404");
             return "Redirected";
         });
+
     }
 
     ModelAndView indexPage(Request request, Response response) throws Exception {

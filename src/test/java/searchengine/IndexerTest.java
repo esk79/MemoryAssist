@@ -30,6 +30,7 @@ public class IndexerTest {
         resources.add(resource4);
 
 
+
         indexer = new Indexer("src/test/resources/index");
         indexer.deleteAll();
     }
@@ -38,16 +39,16 @@ public class IndexerTest {
     @Test
     public void testCreateIndex() throws Exception {
         assertEquals(4, indexer.createIndex(resources));
-
     }
 
     @Test
     public void testAddNewResource() throws Exception {
         Resource resource5 = new Resource("Test resource", "adding resource 5");
+        System.out.println(resource5.getUid());
+
 
         indexer.addNewResource(resource5);
         assertEquals(5, indexer.createIndex(resources));
-
     }
 
     @After

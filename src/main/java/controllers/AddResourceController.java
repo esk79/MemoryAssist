@@ -12,7 +12,6 @@ import utils.RouteUtils;
 import utils.RouteWrapper;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -52,7 +51,7 @@ public class AddResourceController extends AbstractController {
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
-        if (!optionalResource.isPresent()){
+        if (!optionalResource.isPresent()) {
             RouteUtils.errorMessage(request, "Please add both title and markdown body");
             response.redirect("/add");
             return "error";
@@ -61,12 +60,8 @@ public class AddResourceController extends AbstractController {
         Resource resource = optionalResource.get();
 
         try {
-            resourceAccess.insertResource(optionalResource.get());
             indexer.addNewResource(resource);
-        } catch (SQLException e) {
-            RouteUtils.errorMessage(request, "Unable to add to database. Please try again later.");
-            response.redirect("/add");
-            return "error";
+//          resourceAccess.insertResource(optionalResource.get());
         } catch (IOException e) {
             RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
             response.redirect("/add");
@@ -78,7 +73,7 @@ public class AddResourceController extends AbstractController {
         return "ok";
     }
 
-    Optional<Resource> getResourceFromRequest(Request request){
+    Optional<Resource> getResourceFromRequest(Request request) {
         String title;
         String markdown;
         try {
@@ -92,7 +87,6 @@ public class AddResourceController extends AbstractController {
         return Optional.of(new Resource(title, markdown));
 
     }
-
 
 
 }
