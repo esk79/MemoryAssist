@@ -1,5 +1,6 @@
 package controllers;
 
+import annotations.IndexDirectoryString;
 import com.google.inject.Inject;
 import models.Resource;
 import searchengine.Searcher;
@@ -21,12 +22,12 @@ import static spark.Spark.post;
 public class SearchController  extends AbstractController {
 
     private final RouteUtils routeUtils;
-    private final Searcher searcher;
+    private final String indexDirectoryString;
 
     @Inject
-    public SearchController(RouteUtils routeUtils, Searcher searcher) {
+    public SearchController(RouteUtils routeUtils, @IndexDirectoryString String indexDirectoryString) {
         this.routeUtils = routeUtils;
-        this.searcher = searcher;
+        this.indexDirectoryString = indexDirectoryString;
     }
 
     @Override
@@ -38,6 +39,7 @@ public class SearchController  extends AbstractController {
     }
 
     ModelAndView searchResultsTemplate(Request request, Response response) throws Exception {
+        Searcher searcher = new Searcher(indexDirectoryString);
         routeUtils.forceAuthentication(request);
 
         String searchTerms = request.queryParams("search");

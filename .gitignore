@@ -50,6 +50,7 @@ fabric.properties
 
 #Custom
 src/main/resources/properties/server.properties
+src/test/resources
 
 .classpath
 .project

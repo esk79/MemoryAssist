@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -44,6 +45,15 @@ public class Indexer {
             addNewResource(resource);
         }
         return writer.numDocs();
+    }
+
+    public void updateDocument(Document document){
+        Term term = null;
+        try {
+            writer.updateDocument(term, document);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteAll() {

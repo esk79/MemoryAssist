@@ -41,6 +41,15 @@ public class IndexerTest {
 
     }
 
+    @Test
+    public void testAddNewResource() throws Exception {
+        Resource resource5 = new Resource("Test resource", "adding resource 5");
+
+        indexer.addNewResource(resource5);
+        assertEquals(5, indexer.createIndex(resources));
+
+    }
+
     @After
     public void tearDown() throws Exception {
         indexer.close();
