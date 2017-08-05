@@ -16,6 +16,7 @@ public class Resource {
     private String title;
     private String markdown;
     private String uid;
+    private Boolean update = false;
 
     public Resource(String title, String markdown) {
         this.title = title;
@@ -27,6 +28,7 @@ public class Resource {
         this.title = title;
         this.markdown = markdown;
         this.uid = uid;
+        this.update = true;
     }
 
     public String getTitle() {
@@ -43,6 +45,10 @@ public class Resource {
 
     public String getMarkdownPreview() {
         return StringUtil.createPreviewText(markdown);
+    }
+
+    public boolean isUpdate(){
+        return update;
     }
 
 

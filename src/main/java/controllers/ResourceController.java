@@ -1,9 +1,10 @@
 package controllers;
 
+import annotations.IndexDirectoryString;
 import com.google.inject.Inject;
-import dao.ResourceAccess;
 import models.Resource;
 import searchengine.Indexer;
+import searchengine.Searcher;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -19,17 +20,17 @@ import static spark.Spark.*;
 /**
  * Created by EvanKing on 8/1/17.
  */
-public class AddResourceController extends AbstractController {
+public class ResourceController extends AbstractController {
 
     private final RouteUtils routeUtils;
-    private final ResourceAccess resourceAccess;
     private final Indexer indexer;
+    private final String indexDirectoryString;
 
     @Inject
-    public AddResourceController(RouteUtils routeUtils, ResourceAccess resourceAccess, Indexer indexer) {
+    public ResourceController(RouteUtils routeUtils, Indexer indexer, @IndexDirectoryString String indexDirectoryString) {
         this.routeUtils = routeUtils;
-        this.resourceAccess = resourceAccess;
         this.indexer = indexer;
+        this.indexDirectoryString = indexDirectoryString;
     }
 
     @Override
@@ -39,6 +40,9 @@ public class AddResourceController extends AbstractController {
             get("", routeWrapper.templateWrapper(this::addResourceTemplate), new FreeMarkerEngine());
             post("", "application/json", routeUtils.route(this::addResourceOnPost));
         });
+        path("/edit", () -> {
+            get("/:uid", routeWrapper.templateWrapper(this::editResourceTemplate), new FreeMarkerEngine());
+        });
     }
 
     ModelAndView addResourceTemplate(Request request, Response response) throws Exception {
@@ -46,8 +50,26 @@ public class AddResourceController extends AbstractController {
         return routeUtils.modelAndView(request, "addresource.ftl").get();
     }
 
+    ModelAndView editResourceTemplate(Request request, Response response) throws Exception {
+        routeUtils.forceAuthentication(request);
+        Searcher searcher = new Searcher(indexDirectoryString);
+
+        String uid = request.params(":uid");
+
+        Resource resource = searcher.getResourceByUID(uid);
+
+        return routeUtils.modelAndView(request, "addresource.ftl")
+                .add("title", resource.getTitle())
+                .add("markdown", resource.getMarkdown())
+                .add("uid", uid)
+                .get();
+    }
+
     //TODO: refactor
-    String addResourceOnPost(Request request, Response response) {
+    String addResourceOnPost(Request request, Response response) throws RouteUtils.InvalidParamException {
+        //TODO: make sure title and markdown are both present
+
+
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
@@ -58,6 +80,12 @@ public class AddResourceController extends AbstractController {
         }
 
         Resource resource = optionalResource.get();
+
+        if (resource.isUpdate()){
+            //TODO: update logic here
+            System.out.println("Its an update baby!!!!");
+            return "update logic";
+        }
 
         try {
             indexer.addNewResource(resource);
@@ -76,14 +104,21 @@ public class AddResourceController extends AbstractController {
     Optional<Resource> getResourceFromRequest(Request request) {
         String title;
         String markdown;
+        String uid;
         try {
             title = RouteUtils.queryParam(request, "title");
             markdown = RouteUtils.queryParam(request, "resource");
+            uid = RouteUtils.queryParam(request, "uid");
         } catch (RouteUtils.InvalidParamException e) {
             //TODO: LOG
             e.printStackTrace();
             return Optional.empty();
         }
+
+        if (uid != null){
+            return Optional.of(new Resource(title, markdown, uid));
+        }
+
         return Optional.of(new Resource(title, markdown));
 
     }

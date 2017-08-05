@@ -6,11 +6,22 @@
 
     <form action="/add" method="post" role="form">
         <div class="form-group">
-            <input class="form-control" name="title" placeholder="Title">
+            <#if title??>
+                <input class="form-control" name="title" placeholder="Title">${title}</input>
+            <#else>
+                <input class="form-control" name="title" placeholder="Title">
+            </#if>
         </div>
         <div class="form-group">
-            <textarea id="markdown-editor" name="resource"></textarea>
+            <#if markdown??>
+                <textarea id="markdown-editor" name="resource">${markdown}</textarea>
+            <#else>
+                <textarea id="markdown-editor" name="resource"></textarea>
+            </#if>
         </div>
+        <#if uid??>
+            <input type="hidden" name="uid" value=${uid}>
+        </#if>
         <button type="submit" class="btn btn-default">Submit</button>
     </form>
 

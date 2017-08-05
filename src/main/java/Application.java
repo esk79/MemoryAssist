@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import config.DatabaseConfig;
-import controllers.AddResourceController;
+import controllers.ResourceController;
 import controllers.AuthenticationController;
 import controllers.IndexController;
 import controllers.SearchController;
@@ -31,7 +31,7 @@ public class Application {
         Injector injector = Guice.createInjector(new Module());
         injector.getInstance(IndexController.class).init();
         injector.getInstance(AuthenticationController.class).init();
-        injector.getInstance(AddResourceController.class).init();
+        injector.getInstance(ResourceController.class).init();
         injector.getInstance(SearchController.class).init();
 
         injector.getInstance(DatabaseConfig.class).dbInit();

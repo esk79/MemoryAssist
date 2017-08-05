@@ -66,6 +66,7 @@ public class SearchController  extends AbstractController {
         return routeUtils.modelAndView(request, "viewresource.ftl")
                 .add("title", title)
                 .add("html", html)
+                .add("uid", uid)
                 .get();
     }
 }
