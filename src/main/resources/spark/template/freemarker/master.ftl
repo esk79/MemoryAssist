@@ -70,7 +70,6 @@
     </#if>
 </div>
 
-
     <#nested/>
 
 </body>

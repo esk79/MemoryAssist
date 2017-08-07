@@ -10,6 +10,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import utils.Log;
 import utils.LuceneConstants;
 
 import java.io.IOException;
@@ -21,9 +22,11 @@ import java.util.ArrayList;
  * Created by EvanKing on 7/12/17.
  */
 public class Indexer {
+    private static final Log LOGGER = Log.forClass(Indexer.class);
+
     private IndexWriter writer;
 
-    //TODO: make sure error handling is at correct level of abstraction beacuse right now it is not
+    //TODO: make sure error handling is at correct level of abstraction because right now it is not
 
     @Inject
     public Indexer(@IndexDirectoryString String indexDirectoryString) throws IOException {
@@ -65,8 +68,7 @@ public class Indexer {
         try {
             writer.updateDocument(new Term(LuceneConstants.UID, uid), document);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("[-] Error updating resource: %s", e.getMessage());
         }
     }
 
@@ -74,8 +76,7 @@ public class Indexer {
         try {
             writer.deleteDocuments(new Term(LuceneConstants.UID, uid));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("[-] Error deleting resource: %s", e.getMessage());
         }
     }
 
@@ -83,7 +84,7 @@ public class Indexer {
         try {
             writer.deleteAll();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error deleting all resources: %s", e.getMessage());
         }
     }
 
@@ -91,7 +92,7 @@ public class Indexer {
         try {
             writer.commit();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error committing to index: %s", e.getMessage());
         }
     }
 
@@ -99,7 +100,7 @@ public class Indexer {
         try {
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error closing index: %s", e.getMessage());
         }
     }
 

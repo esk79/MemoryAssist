@@ -9,6 +9,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
+import utils.Log;
 import utils.RouteUtils;
 import utils.RouteWrapper;
 
@@ -22,6 +23,7 @@ import static spark.Spark.*;
  * Created by EvanKing on 8/1/17.
  */
 public class ResourceController extends AbstractController {
+    private static final Log LOGGER = Log.forClass(ResourceController.class);
 
     private final RouteUtils routeUtils;
     private final Indexer indexer;
@@ -93,7 +95,6 @@ public class ResourceController extends AbstractController {
 
         try {
             indexer.addNewResource(resource);
-//          resourceAccess.insertResource(optionalResource.get());
         } catch (IOException e) {
             RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
             response.redirect("/add");
@@ -105,11 +106,10 @@ public class ResourceController extends AbstractController {
         return "ok";
     }
 
-    String deleteResource(Request request, Response response) throws RouteUtils.NotAuthenticatedException, SQLException {
+    String deleteResource(Request request, Response response) throws RouteUtils.NotAuthenticatedException, SQLException, RouteUtils.InvalidParamException {
         routeUtils.forceAuthentication(request);
 
-        //TODO: put uid logic in wrapper to throw error if null
-        String uid = request.params(":uid");
+        String uid = RouteUtils.pathParam(request,":uid");
         indexer.deleteResource(uid);
         RouteUtils.successMessage(request, "Resource deleted!");
         response.redirect("/");
@@ -123,8 +123,7 @@ public class ResourceController extends AbstractController {
             title = RouteUtils.queryParam(request, "title");
             markdown = RouteUtils.queryParam(request, "resource");
         } catch (RouteUtils.InvalidParamException e) {
-            //TODO: LOG
-            e.printStackTrace();
+            LOGGER.severe("Error getting param: %s ", e.getMessage());
             return Optional.empty();
         }
 
@@ -133,7 +132,7 @@ public class ResourceController extends AbstractController {
             try {
                 uid = RouteUtils.queryParam(request, "uid");
             } catch (RouteUtils.InvalidParamException e) {
-                e.printStackTrace();
+                LOGGER.severe("Error getting param: %s ", e.getMessage());
             }
             return Optional.of(new Resource(title, markdown, uid));
         }

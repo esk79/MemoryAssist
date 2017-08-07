@@ -13,6 +13,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import utils.Log;
 import utils.LuceneConstants;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.List;
  * Created by EvanKing on 7/12/17.
  */
 public class Searcher {
+    private static final Log LOGGER = Log.forClass(Searcher.class);
 
     IndexSearcher indexSearcher;
     QueryParser queryParser;
@@ -75,7 +77,7 @@ public class Searcher {
             query = queryParser.parse(searchTerms);
             topDocs = indexSearcher.search(query, LuceneConstants.MAX_NUMBER_OF_RESULTS);
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error searching index: %s", e.getMessage());
             return null;
         }
         return topDocs;
@@ -86,7 +88,7 @@ public class Searcher {
         try {
             return indexSearcher.doc(scoreDoc.doc);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error getting document from ScoreDoc object: %s", e.getMessage());
         }
         return null;
     }
@@ -108,7 +110,7 @@ public class Searcher {
             indexDirectory = FSDirectory.open(indexDirectoryPath);
             result = DirectoryReader.indexExists(indexDirectory);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[-] Error checking if index is present: %s", e.getMessage());
         }
         return result;
     }

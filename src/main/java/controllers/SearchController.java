@@ -8,6 +8,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
+import utils.Log;
 import utils.MarkdownProcessor;
 import utils.RouteUtils;
 import utils.RouteWrapper;
@@ -20,6 +21,7 @@ import static spark.Spark.*;
  * Created by EvanKing on 8/2/17.
  */
 public class SearchController extends AbstractController {
+    private static final Log LOGGER = Log.forClass(SearchController.class);
 
     private final RouteUtils routeUtils;
     private final String indexDirectoryString;
@@ -59,7 +61,6 @@ public class SearchController extends AbstractController {
 
     ModelAndView displaySearchResultTemplate(Request request, Response response) throws Exception {
         routeUtils.forceAuthentication(request);
-        //TODO: really wish I didnt have to create a new searcher here
 
         if (!Searcher.indexExists(indexDirectoryString)) {
             return RouteUtils.redirectTo(response, "/");

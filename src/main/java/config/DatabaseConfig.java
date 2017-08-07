@@ -2,6 +2,7 @@ package config;
 
 import com.google.inject.Inject;
 import utils.ConnectionProvider;
+import utils.Log;
 import utils.Statements;
 
 import java.sql.Connection;
@@ -15,6 +16,8 @@ import java.sql.Statement;
  * @version 1.0, March 11 2017
  */
 public final class DatabaseConfig {
+    private static final Log LOGGER = Log.forClass(DatabaseConfig.class);
+
     private final ConnectionProvider connectionProvider;
 
     @Inject
@@ -22,19 +25,18 @@ public final class DatabaseConfig {
         this.connectionProvider = connectionProvider;
     }
 
-    //TODO: Logging
     public void dbInit() {
-        System.out.println("[!] Initializing database");
+        LOGGER.info("[!] Initializing database");
         try (Connection connection = connectionProvider.getConnection()) {
             setUp(connection);
         } catch (Exception e) {
-            System.out.println("[-] Error " + e.getMessage());
+            LOGGER.severe("[-] Error " + e.getMessage());
         }
     }
 
     public static void setUp(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            System.out.println("[!] Creating table");
+           LOGGER.info("[!] Creating tables if not exist");
             statement.executeUpdate(Statements.CREATE_AUTHENTICATION_TABLE);
             statement.executeUpdate(Statements.CREATE_RESOURCE_TABLE);
         }
