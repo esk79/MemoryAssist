@@ -4,9 +4,9 @@
 <!-- Page Content -->
 <div class="container">
     <div class="well">
-        <form action="/search" method="post" class="form-inline" role="form">
+        <form action="/search" method="get" class="form-inline" role="form">
             <div class="form-group">
-                <input type="search" class="form-control" name="search" placeholder="Enter search terms">
+                <input type="search" class="form-control" name="query" placeholder="Enter search terms">
             </div>
             <button type="submit" id="s" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
             </button>

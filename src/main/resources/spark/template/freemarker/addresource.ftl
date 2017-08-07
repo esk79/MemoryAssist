@@ -40,6 +40,12 @@
             uniqueId: "MyUniqueID",
             delay: 1000,
         },
+//        toolbar: [{
+//            name: "bold",
+//            action: SimpleMDE.toggleBold,
+//            className: "fa fa-trash",
+//            title: "Bold (Ctrl+B)",
+//        }]
     });
 </script>
 <!-- /.container -->
