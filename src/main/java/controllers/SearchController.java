@@ -48,7 +48,7 @@ public class SearchController extends AbstractController {
 
         Searcher searcher = new Searcher(indexDirectoryString);
 
-        String searchTerms = RouteUtils.queryParam(request, "search");
+        String searchTerms = RouteUtils.queryParam(request, "query");
 
         List<Resource> resultingResourceList = searcher.search(searchTerms);
 
@@ -67,7 +67,7 @@ public class SearchController extends AbstractController {
 
         Searcher searcher = new Searcher(indexDirectoryString);
 
-        String uid = RouteUtils.param(request, ":uid");
+        String uid = RouteUtils.pathParam(request, ":uid");
 
         Resource resource = searcher.getResourceByUID(uid);
 

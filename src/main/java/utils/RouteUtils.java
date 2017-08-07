@@ -56,7 +56,7 @@ public class RouteUtils {
         return value;
     }
 
-    public static String param(Request request, String paramName)
+    public static String pathParam(Request request, String paramName)
             throws InvalidParamException {
         String value = request.params(paramName);
         if (value == null) {
