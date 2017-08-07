@@ -14,13 +14,14 @@
     </div>
 
     <div class="well">
-        <#list results as result>
-            <div class="jumbotron search-result-jumbo">
-                <a href="search/${result.uid}">  <h2>${result.title}</h2></a>
-                <p>${result.markdownPreview}</p>
-
-            </div>
-        </#list>
+        <#if results??>
+            <#list results as result>
+                <div class="jumbotron search-result-jumbo">
+                    <a href="search/${result.uid}"><h2>${result.title}</h2></a>
+                    <p>${result.markdownPreview}</p>
+                </div>
+            </#list>
+        </#if>
     </div>
 
 </div>

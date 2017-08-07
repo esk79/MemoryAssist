@@ -13,6 +13,7 @@ import utils.RouteUtils;
 import utils.RouteWrapper;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -43,6 +44,9 @@ public class ResourceController extends AbstractController {
         path("/edit", () -> {
             get("/:uid", routeWrapper.templateWrapper(this::editResourceTemplate), new FreeMarkerEngine());
         });
+        path("/delete", () -> {
+            get("/:uid", "application/json", routeUtils.route(this::deleteResource));
+        });
     }
 
     ModelAndView addResourceTemplate(Request request, Response response) throws Exception {
@@ -66,10 +70,9 @@ public class ResourceController extends AbstractController {
     }
 
     //TODO: refactor
-    String addResourceOnPost(Request request, Response response) throws RouteUtils.InvalidParamException {
+    String addResourceOnPost(Request request, Response response) throws RouteUtils.InvalidParamException, RouteUtils.NotAuthenticatedException, SQLException {
+        routeUtils.forceAuthentication(request);
         //TODO: make sure title and markdown are both present
-
-
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
@@ -81,10 +84,11 @@ public class ResourceController extends AbstractController {
 
         Resource resource = optionalResource.get();
 
-        if (resource.isUpdate()){
-            //TODO: update logic here
-            System.out.println("Its an update baby!!!!");
-            return "update logic";
+        if (resource.isUpdate()) {
+            indexer.updateResource(resource);
+            RouteUtils.successMessage(request, "Resource updated!");
+            response.redirect("/add");
+            return "ok";
         }
 
         try {
@@ -101,21 +105,36 @@ public class ResourceController extends AbstractController {
         return "ok";
     }
 
+    String deleteResource(Request request, Response response) throws RouteUtils.NotAuthenticatedException, SQLException {
+        routeUtils.forceAuthentication(request);
+
+        //TODO: put uid logic in wrapper to throw error if null
+        String uid = request.params(":uid");
+        indexer.deleteResource(uid);
+        RouteUtils.successMessage(request, "Resource deleted!");
+        response.redirect("/");
+        return "ok";
+    }
+
     Optional<Resource> getResourceFromRequest(Request request) {
         String title;
         String markdown;
-        String uid;
         try {
             title = RouteUtils.queryParam(request, "title");
             markdown = RouteUtils.queryParam(request, "resource");
-            uid = RouteUtils.queryParam(request, "uid");
         } catch (RouteUtils.InvalidParamException e) {
             //TODO: LOG
             e.printStackTrace();
             return Optional.empty();
         }
 
-        if (uid != null){
+        if (RouteUtils.queryParamExists(request, "uid")) {
+            String uid = null;
+            try {
+                uid = RouteUtils.queryParam(request, "uid");
+            } catch (RouteUtils.InvalidParamException e) {
+                e.printStackTrace();
+            }
             return Optional.of(new Resource(title, markdown, uid));
         }
 

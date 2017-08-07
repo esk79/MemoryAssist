@@ -56,10 +56,20 @@ public class RouteUtils {
         return value;
     }
 
+    public static String param(Request request, String paramName)
+            throws InvalidParamException {
+        String value = request.params(paramName);
+        if (value == null) {
+            String msg = String.format("Parameter %s expected, but not found", paramName);
+            throw new InvalidParamException(msg);
+        }
+        return value;
+    }
+
     public boolean userAuthenticated(Request request)
             throws SQLException {
         Boolean isAuthenticated = request.session().attribute("authenticated");
-        if (isAuthenticated != null && isAuthenticated){
+        if (isAuthenticated != null && isAuthenticated) {
             return true;
         }
         return false;
@@ -67,9 +77,9 @@ public class RouteUtils {
 
     public void forceAuthentication(Request request)
             throws NotAuthenticatedException, SQLException {
-       if (!userAuthenticated(request)){
-           throw new NotAuthenticatedException();
-       }
+        if (!userAuthenticated(request)) {
+            throw new NotAuthenticatedException();
+        }
     }
 
     public static void successMessage(Request request, String message) {

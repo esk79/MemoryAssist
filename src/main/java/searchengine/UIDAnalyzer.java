@@ -11,5 +11,6 @@ public class UIDAnalyzer extends Analyzer {
     @Override
     protected TokenStreamComponents createComponents(String s) {
         return null;
+
     }
 }

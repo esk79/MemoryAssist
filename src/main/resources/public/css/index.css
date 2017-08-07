@@ -45,3 +45,25 @@ body {
 .search-result-jumbo {
     padding: 5px 25px 5px 25px;
 }
+
+.edit-button {
+    margin-left: 15px;
+}
+
+.edit-button-group {
+    font-size: 20px;
+    padding-bottom: 30px;
+    margin-right: -40px;
+    color: #1a1a1a;
+}
+
+.edit-button-group a {
+    color: #1a1a1a;
+}
+
+.editor-toolbar.fullscreen{
+    z-index: 100000 !important;
+}
+
+
+

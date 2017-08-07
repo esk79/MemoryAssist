@@ -10,6 +10,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import utils.LuceneConstants;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 public class Indexer {
     private IndexWriter writer;
 
+    //TODO: make sure error handling is at correct level of abstraction beacuse right now it is not
+
     @Inject
     public Indexer(@IndexDirectoryString String indexDirectoryString) throws IOException {
         Path indexDirectoryPath = Paths.get(indexDirectoryString);
@@ -29,7 +32,7 @@ public class Indexer {
         //this directory will contain the indexes
         Directory indexDirectory = FSDirectory.open(indexDirectoryPath);
 
-        //create the indexer with a standard analyzer
+        //create the indexer with a whitespace analyzer
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new StandardAnalyzer());
         writer = new IndexWriter(indexDirectory, indexWriterConfig);
     }
@@ -47,11 +50,31 @@ public class Indexer {
         return writer.numDocs();
     }
 
-    public void updateDocument(Document document){
-        Term term = null;
+    public void updateResource(Resource resource){
+        Document document = resource.getDocument();
+        updateDocument(document, resource.getUid());
+        commit();
+    }
+
+    public void deleteResource(String uid){
+        deleteDocument(uid);
+        commit();
+    }
+
+    private void updateDocument(Document document, String uid){
         try {
-            writer.updateDocument(term, document);
+            writer.updateDocument(new Term(LuceneConstants.UID, uid), document);
         } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteDocument(String uid){
+        try {
+            writer.deleteDocuments(new Term(LuceneConstants.UID, uid));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }

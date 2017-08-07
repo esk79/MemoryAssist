@@ -4,7 +4,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import utils.LuceneConstants;
-import utils.StringUtil;
+import utils.MarkdownProcessor;
 
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class Resource {
     public Resource(String title, String markdown) {
         this.title = title;
         this.markdown = markdown;
-        this.uid = UUID.randomUUID().toString();
+        this.uid = generateUID();
     }
 
     public Resource(String title, String markdown, String uid) {
@@ -44,7 +44,7 @@ public class Resource {
     }
 
     public String getMarkdownPreview() {
-        return StringUtil.createPreviewText(markdown);
+        return MarkdownProcessor.createPreviewText(markdown);
     }
 
     public boolean isUpdate(){
@@ -83,6 +83,10 @@ public class Resource {
                 .add(markdown);
 
         return joiner.toString();
+    }
+
+    private String generateUID(){
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 }
 

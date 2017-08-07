@@ -7,7 +7,7 @@
     <form action="/add" method="post" role="form">
         <div class="form-group">
             <#if title??>
-                <input class="form-control" name="title" placeholder="Title">${title}</input>
+                <input class="form-control" name="title" placeholder="Title" value="${title}">
             <#else>
                 <input class="form-control" name="title" placeholder="Title">
             </#if>

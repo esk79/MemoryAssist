@@ -27,4 +27,13 @@ public class MarkdownProcessor {
         String html = renderer.render(document);
         return html;
     }
+
+    public static String createPreviewText(String s){
+        return sliceEnd(s,200) + "...";
+    }
+
+    private static String sliceEnd(String s, int endIndex) {
+        if (endIndex < 0) endIndex = s.length() + endIndex;
+        return s.substring(0, Math.min(endIndex, s.length()));
+    }
 }

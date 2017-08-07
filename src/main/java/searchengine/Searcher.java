@@ -30,8 +30,7 @@ public class Searcher {
     QueryParser queryParser;
     IndexReader reader;
 
-    public Searcher(String indexDirectoryString)
-            throws IOException {
+    public Searcher(String indexDirectoryString) throws IOException {
         Path indexDirectoryPath = Paths.get(indexDirectoryString);
         Directory indexDirectory = FSDirectory.open(indexDirectoryPath);
         reader = DirectoryReader.open(indexDirectory);
@@ -99,6 +98,19 @@ public class Searcher {
         TopDocs topdoc = indexSearcher.search(query, 1);
         List<Resource> result = convertTopDocsToResourceList(topdoc);
         return result.get(0);
+    }
+
+    public static boolean indexExists(String indexDirectoryString){
+        Path indexDirectoryPath = Paths.get(indexDirectoryString);
+        Directory indexDirectory = null;
+        boolean result = true;
+        try {
+            indexDirectory = FSDirectory.open(indexDirectoryPath);
+            result = DirectoryReader.indexExists(indexDirectory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

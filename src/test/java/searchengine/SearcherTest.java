@@ -1,13 +1,8 @@
 package searchengine;
 
 import models.Resource;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopDocs;
 import org.junit.Before;
 import org.junit.Test;
-import utils.LuceneConstants;
 
 import java.util.List;
 
@@ -53,17 +48,5 @@ public class SearcherTest {
     @Test
     public void testSearchSpecificFieldValue() throws Exception {
 
-        QueryParser queryParser = new QueryParser(LuceneConstants.UID,
-                new StandardAnalyzer());
-
-        Query query = queryParser.parse("4ea1354b-d398-4bd6-8ee0-c0d7cb344a30");
-        System.out.println(query);
-
-
-        TopDocs topdoc = searcher.indexSearcher.search(query, 1);
-        System.out.println(topdoc.totalHits);
-
-        List<Resource> result = searcher.convertTopDocsToResourceList(topdoc);
-        System.out.println(result);
     }
 }
