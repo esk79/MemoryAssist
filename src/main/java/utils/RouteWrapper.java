@@ -4,6 +4,8 @@ import spark.*;
 
 public final class RouteWrapper {
 
+    private final RouteUtils routeUtils = new RouteUtils();
+
 
     @FunctionalInterface
     public interface LoggedRoute {
@@ -18,6 +20,7 @@ public final class RouteWrapper {
     public Route routeWrapper(LoggedRoute route) {
         return (request, response) -> {
             try {
+                routeUtils.forceAuthentication(request);
                 return route.handle(request, response);
             } catch (RouteUtils.NotAuthenticatedException e) {
                 response.status(403);
@@ -32,6 +35,7 @@ public final class RouteWrapper {
     public TemplateViewRoute templateWrapper(LoggedTemplateViewRoute route) {
         return (request, response) -> {
             try {
+                routeUtils.forceAuthentication(request);
                 return route.handle(request, response);
             } catch (RouteUtils.NotAuthenticatedException e) {
                 return RouteUtils.redirectTo(response, "/authenticate");

@@ -14,7 +14,6 @@ import utils.RouteUtils;
 import utils.RouteWrapper;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -41,26 +40,24 @@ public class ResourceController extends AbstractController {
         RouteWrapper routeWrapper = new RouteWrapper();
         path("/add", () -> {
             get("", routeWrapper.templateWrapper(this::addResourceTemplate), new FreeMarkerEngine());
-            post("", "application/json", routeUtils.route(this::addResourceOnPost));
+            post("", "application/json", routeWrapper.routeWrapper(this::addResourceOnPost));
         });
         path("/edit", () -> {
             get("/:uid", routeWrapper.templateWrapper(this::editResourceTemplate), new FreeMarkerEngine());
         });
         path("/delete", () -> {
-            get("/:uid", "application/json", routeUtils.route(this::deleteResource));
+            get("/:uid", "application/json", routeWrapper.routeWrapper(this::deleteResource));
         });
     }
 
     ModelAndView addResourceTemplate(Request request, Response response) throws Exception {
-        routeUtils.forceAuthentication(request);
         return routeUtils.modelAndView(request, "addresource.ftl").get();
     }
 
     ModelAndView editResourceTemplate(Request request, Response response) throws Exception {
-        routeUtils.forceAuthentication(request);
         Searcher searcher = new Searcher(indexDirectoryString);
 
-        String uid = request.params(":uid");
+        String uid = routeUtils.pathParam(request, ":uid");
 
         Resource resource = searcher.getResourceByUID(uid);
 
@@ -71,29 +68,21 @@ public class ResourceController extends AbstractController {
                 .get();
     }
 
-    //TODO: refactor
-    String addResourceOnPost(Request request, Response response) throws RouteUtils.InvalidParamException, RouteUtils.NotAuthenticatedException, SQLException {
-        routeUtils.forceAuthentication(request);
+    String addResourceOnPost(Request request, Response response) {
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
         if (!optionalResource.isPresent()) {
             RouteUtils.errorMessage(request, "Please add both title and markdown body");
-            response.redirect("/add");
-            return "error";
+            RouteUtils.redirectTo(response, "/add");
+            return "redirected";
         }
 
         Resource resource = optionalResource.get();
 
-        if (resource.isUpdate()) {
-            indexer.updateResource(resource);
-            RouteUtils.successMessage(request, "Resource updated!");
-            response.redirect("/add");
-            return "ok";
-        }
-
         try {
-            indexer.addNewResource(resource);
+            if (resource.isUpdate()) indexer.updateResource(resource);
+            else indexer.addNewResource(resource);
         } catch (IOException e) {
             LOGGER.severe("[-] Error: %s", e.getMessage());
             RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
@@ -106,11 +95,19 @@ public class ResourceController extends AbstractController {
         return "ok";
     }
 
-    String deleteResource(Request request, Response response) throws RouteUtils.NotAuthenticatedException, SQLException, RouteUtils.InvalidParamException {
-        routeUtils.forceAuthentication(request);
+    String deleteResource(Request request, Response response) throws RouteUtils.InvalidParamException {
 
-        String uid = RouteUtils.pathParam(request,":uid");
-        indexer.deleteResource(uid);
+        String uid = RouteUtils.pathParam(request, ":uid");
+
+        try {
+            indexer.deleteResource(uid);
+        } catch (IOException e) {
+            LOGGER.severe("[-] Error: %s", e.getMessage());
+            RouteUtils.errorMessage(request, "Unable to delete resource. Please try again later.");
+            response.redirect(request.url());
+            return "error";
+        }
+
         RouteUtils.successMessage(request, "Resource deleted!");
         response.redirect("/");
         return "ok";

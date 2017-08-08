@@ -53,55 +53,37 @@ public class Indexer {
         return writer.numDocs();
     }
 
-    public void updateResource(Resource resource){
+    public void updateResource(Resource resource) throws IOException {
         Document document = resource.getDocument();
         updateDocument(document, resource.getUid());
         commit();
     }
 
-    public void deleteResource(String uid){
+    public void deleteResource(String uid) throws IOException {
         deleteDocument(uid);
         commit();
     }
 
-    private void updateDocument(Document document, String uid){
-        try {
-            writer.updateDocument(new Term(LuceneConstants.UID, uid), document);
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error updating resource: %s", e.getMessage());
-        }
+    private void updateDocument(Document document, String uid) throws IOException {
+        writer.updateDocument(new Term(LuceneConstants.UID, uid), document);
     }
 
-    private void deleteDocument(String uid){
-        try {
-            writer.deleteDocuments(new Term(LuceneConstants.UID, uid));
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error deleting resource: %s", e.getMessage());
-        }
+    private void deleteDocument(String uid) throws IOException {
+        writer.deleteDocuments(new Term(LuceneConstants.UID, uid));
     }
 
-    public void deleteAll() {
-        try {
-            writer.deleteAll();
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error deleting all resources: %s", e.getMessage());
-        }
+    public void deleteAll() throws IOException {
+        writer.deleteAll();
+
     }
 
-    public void commit() {
-        try {
-            writer.commit();
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error committing to index: %s", e.getMessage());
-        }
+    public void commit() throws IOException {
+        writer.commit();
+
     }
 
-    public void close() {
-        try {
-            writer.close();
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error closing index: %s", e.getMessage());
-        }
+    public void close() throws IOException {
+        writer.close();
     }
 
 }

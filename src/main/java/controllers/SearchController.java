@@ -42,7 +42,6 @@ public class SearchController extends AbstractController {
     }
 
     ModelAndView searchResultsTemplate(Request request, Response response) throws Exception {
-        routeUtils.forceAuthentication(request);
 
         if (!Searcher.indexExists(indexDirectoryString)) {
             return routeUtils.modelAndView(request, "searchresult.ftl").get();
@@ -60,7 +59,6 @@ public class SearchController extends AbstractController {
     }
 
     ModelAndView displaySearchResultTemplate(Request request, Response response) throws Exception {
-        routeUtils.forceAuthentication(request);
 
         if (!Searcher.indexExists(indexDirectoryString)) {
             return RouteUtils.redirectTo(response, "/");

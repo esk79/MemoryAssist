@@ -65,5 +65,8 @@ body {
     z-index: 100000 !important;
 }
 
+.jumbotron.search-result-jumbo{
+    padding-right: 10px;
+}
 
 

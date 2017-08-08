@@ -8,6 +8,7 @@ import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 import utils.Log;
 import utils.RouteUtils;
+import utils.RouteWrapper;
 
 import java.util.Optional;
 
@@ -30,8 +31,11 @@ public class AuthenticationController extends AbstractController {
 
     @Override
     public void init() {
+        RouteWrapper routeWrapper = new RouteWrapper();
+
         path("/authenticate", () -> {
             get("", routeUtils.template("authenticate.ftl"), new FreeMarkerEngine());
+            // Not using routeWrapper below because don't want to force authenticated for authentication page
             post("", routeUtils.route(this::authenticate));
         });
     }
@@ -41,7 +45,7 @@ public class AuthenticationController extends AbstractController {
         Optional<Authenticator> authenticatorOptional = authenticatorAccess.getAuthenticator();
 
         if (!authenticatorOptional.isPresent()) {
-            LOGGER.severe("[-] Unable to create authenticator from DB.");
+            return RouteUtils.errorRedirect(response, "/authenticate", "Unable to create authenticator from DB.");
         }
 
         Authenticator authenticator = authenticatorOptional.get();
@@ -53,9 +57,7 @@ public class AuthenticationController extends AbstractController {
             return "redirected";
         }
 
-        LOGGER.warning("[-] Incorrect authentication attempt of %s", password);
-        response.redirect("/authenticate");
-        return "redirected";
+        return RouteUtils.errorRedirect(response, "/authenticate", "Incorrect authentication attempt of: " + password);
     }
 
 }

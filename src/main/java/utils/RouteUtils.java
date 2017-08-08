@@ -10,6 +10,9 @@ import java.util.HashMap;
  */
 public class RouteUtils {
 
+    private static final Log LOGGER = Log.forClass(RouteUtils.class);
+
+
     public TemplateViewRoute template(String templatePath) {
         return (request, response) -> modelAndView(request, templatePath).get();
     }
@@ -94,11 +97,16 @@ public class RouteUtils {
         request.session().attribute("error", message);
     }
 
-
     public static ModelAndView redirectTo(Response response, String path) {
         response.redirect(path);
         // return whatever, will be overridden by the redirect
         return new ModelAndView(new HashMap<String, Object>(), "");
+    }
+
+    public static String errorRedirect(Response response, String redirectPath, String message) {
+        LOGGER.severe("[-] %s", message);
+        response.redirect(redirectPath);
+        return "redirected";
     }
 
     public static class NotAuthenticatedException extends Exception {
