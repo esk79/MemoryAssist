@@ -61,12 +61,19 @@ public class Resource {
         TextField uidField = new TextField(LuceneConstants.UID,
                 uid, Field.Store.YES);
 
+        TextField titleField = new TextField(LuceneConstants.TITLE,
+                title, Field.Store.YES);
+
+        TextField markdownField = new TextField(LuceneConstants.MARKDOWN,
+                markdown, Field.Store.YES);
 
         // defaultContentField is used as the default search field as to search all fields of the resource
         TextField defaultContentField = new TextField(LuceneConstants.DEFAULT_FIELD,
                 getDefaultContentField(), Field.Store.YES);
 
         document.add(uidField);
+        document.add(titleField);
+        document.add(markdownField);
         document.add(defaultContentField);
 
         return document;
@@ -82,6 +89,16 @@ public class Resource {
 
     private String generateUID(){
         return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
+    @Override
+    public String toString() {
+        return "Resource{" +
+                "title='" + title + '\'' +
+                ", markdown='" + markdown + '\'' +
+                ", uid='" + uid + '\'' +
+                ", update=" + update +
+                '}';
     }
 }
 

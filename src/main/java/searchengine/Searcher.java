@@ -5,12 +5,10 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import utils.Log;
@@ -49,8 +47,7 @@ public class Searcher {
         return resourceList;
     }
 
-    //TODO: make private
-    public List<Resource> convertTopDocsToResourceList(TopDocs topDocs) {
+    private List<Resource> convertTopDocsToResourceList(TopDocs topDocs) {
         List<Resource> result = new ArrayList<>();
 
         if (topDocs != null) {
@@ -94,15 +91,13 @@ public class Searcher {
     }
 
     public Resource getResourceByUID(String uid) throws IOException, ParseException {
-        QueryParser queryParser = new QueryParser(LuceneConstants.UID,
-                new StandardAnalyzer());
-        Query query = queryParser.parse(uid);
-        TopDocs topdoc = indexSearcher.search(query, 1);
-        List<Resource> result = convertTopDocsToResourceList(topdoc);
+        TermQuery query = new TermQuery(new Term(LuceneConstants.UID, uid));
+        TopDocs topDocs = indexSearcher.search(query, 1);
+        List<Resource> result = convertTopDocsToResourceList(topDocs);
         return result.get(0);
     }
 
-    public static boolean indexExists(String indexDirectoryString){
+    public static boolean indexExists(String indexDirectoryString) {
         Path indexDirectoryPath = Paths.get(indexDirectoryString);
         Directory indexDirectory = null;
         boolean result = true;

@@ -49,7 +49,7 @@ public class RouteUtils {
     public static String queryParam(Request request, String paramName)
             throws InvalidParamException {
         String value = request.queryParams(paramName);
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             String msg = String.format("Parameter %s expected, but not found", paramName);
             throw new InvalidParamException(msg);
         }
@@ -59,7 +59,7 @@ public class RouteUtils {
     public static String pathParam(Request request, String paramName)
             throws InvalidParamException {
         String value = request.params(paramName);
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             String msg = String.format("Parameter %s expected, but not found", paramName);
             throw new InvalidParamException(msg);
         }

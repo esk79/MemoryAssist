@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" href="https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games-grey.png">
     <title>Thalamus</title>
 
     <!------------------------------------------- CSS ------------------------------------------>

@@ -20,7 +20,7 @@ body {
 }
 
 .global-input .form-control {
-    width:120px;
+    width:180px;
 }
 
 .global-input a {
@@ -37,7 +37,7 @@ body {
     }
 
     .global-input .form-control {
-        width:300px;
+        width: 100% !important;
     }
 
 }

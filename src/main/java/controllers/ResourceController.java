@@ -74,7 +74,6 @@ public class ResourceController extends AbstractController {
     //TODO: refactor
     String addResourceOnPost(Request request, Response response) throws RouteUtils.InvalidParamException, RouteUtils.NotAuthenticatedException, SQLException {
         routeUtils.forceAuthentication(request);
-        //TODO: make sure title and markdown are both present
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
@@ -96,6 +95,7 @@ public class ResourceController extends AbstractController {
         try {
             indexer.addNewResource(resource);
         } catch (IOException e) {
+            LOGGER.severe("[-] Error: %s", e.getMessage());
             RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
             response.redirect("/add");
             return "error";
@@ -136,9 +136,7 @@ public class ResourceController extends AbstractController {
             }
             return Optional.of(new Resource(title, markdown, uid));
         }
-
         return Optional.of(new Resource(title, markdown));
-
     }
 
 
