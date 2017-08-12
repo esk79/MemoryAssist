@@ -1,13 +1,16 @@
+import annotations.BackupIndexDirectoryString;
 import annotations.DatabasePassword;
 import annotations.IndexDirectoryString;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import config.DatabaseConfig;
-import controllers.ResourceController;
 import controllers.AuthenticationController;
 import controllers.IndexController;
+import controllers.ResourceController;
 import controllers.SearchController;
+import searchengine.IndexBackupCronJob;
+import spark.servlet.SparkApplication;
 import utils.ConnectionProvider;
 import utils.IOUtils;
 import utils.ProductionConnectionProvider;
@@ -21,9 +24,14 @@ import static spark.Spark.staticFiles;
 /**
  * Created by EvanKing on 7/19/17.
  */
-public class Application {
-    public static boolean run(String propertiesFilePath) {
+public class Application implements SparkApplication {
 
+    @Override
+    public void init() {
+        run("src/main/resources/properties/server.properties");
+    }
+
+    private static boolean run(String propertiesFilePath) {
         if (!handleArgs(propertiesFilePath)) {
             return false;
         }
@@ -36,6 +44,8 @@ public class Application {
 
         injector.getInstance(DatabaseConfig.class).dbInit();
 
+        injector.getInstance(IndexBackupCronJob.class).startIndexBackupCronJob();
+
         return true;
     }
 
@@ -46,7 +56,8 @@ public class Application {
         try {
             serverPort = Integer.parseInt(IOUtils.getPropertyFromPropertiesFile(serverProp, "serverPort"));
             Module.DB_PASSWORD = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePassword");
-            Module.INDEX_DIRECTORY_PATH = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
+            Module.INDEX_DIRECTORY_STRING = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
+            Module.BACKUP_INDEX_DIRECTORY_STRING = IOUtils.getPropertyFromPropertiesFile(serverProp, "backupIndexDirectoryPath");
         } catch (IOException | NumberFormatException e) {
             System.err.printf(String.format("Error: %s", e.getMessage()));
             return false;
@@ -67,23 +78,29 @@ public class Application {
 
     private static class Module extends AbstractModule {
         private static String DB_PASSWORD = null;
-        private static String INDEX_DIRECTORY_PATH = null;
+        private static String INDEX_DIRECTORY_STRING = null;
+        private static String BACKUP_INDEX_DIRECTORY_STRING = null;
 
         @Override
         protected void configure() {
             bind(ConnectionProvider.class).to(ProductionConnectionProvider.class);
 
+            //TODO: Refactor below
             if (DB_PASSWORD == null) {
                 throw new IllegalStateException("DB_PASSWORD not initialized");
             }
 
-            if (INDEX_DIRECTORY_PATH == null) {
-                throw new IllegalStateException("INDEX_DIRECTORY_PATH not initialized");
+            if (INDEX_DIRECTORY_STRING == null) {
+                throw new IllegalStateException("INDEX_DIRECTORY_STRING not initialized");
+            }
+
+            if (BACKUP_INDEX_DIRECTORY_STRING == null) {
+                throw new IllegalStateException("BACKUP_INDEX_DIRECTORY_STRING not initialized");
             }
 
             bind(String.class).annotatedWith(DatabasePassword.class).toInstance(DB_PASSWORD);
-            bind(String.class).annotatedWith(IndexDirectoryString.class).toInstance(INDEX_DIRECTORY_PATH);
-
+            bind(String.class).annotatedWith(IndexDirectoryString.class).toInstance(INDEX_DIRECTORY_STRING);
+            bind(String.class).annotatedWith(BackupIndexDirectoryString.class).toInstance(BACKUP_INDEX_DIRECTORY_STRING);
         }
     }
 }

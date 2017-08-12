@@ -3,6 +3,7 @@ package dao;
 import com.google.inject.Inject;
 import models.Authenticator;
 import utils.ConnectionProvider;
+import utils.Log;
 import utils.Statements;
 
 import java.sql.ResultSet;
@@ -12,8 +13,9 @@ import java.util.Optional;
 /**
  * Created by EvanKing on 7/31/17.
  */
-public class AuthenticatorAccess extends AbstractAccess{
+public class AuthenticatorAccess extends AbstractAccess {
 
+    private static final Log LOGGER = Log.forClass(AuthenticatorAccess.class);
 
     @Inject
     public AuthenticatorAccess(ConnectionProvider connectionProvider) {
@@ -26,8 +28,8 @@ public class AuthenticatorAccess extends AbstractAccess{
 
     public void insertAuthentication(byte[] salt, byte[] hashedPassword) throws SQLException {
 
-        if (getAuthenticator().isPresent()){
-            System.out.println("Authentication table already contains entry. Please remove in order to update password.");
+        if (getAuthenticator().isPresent()) {
+            LOGGER.severe("Authentication table already contains entry. Please remove in order to update password.");
             return;
         }
 
