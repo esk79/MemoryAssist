@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +20,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class IndexBackupThread implements Runnable {
     private static final Log LOGGER = Log.forClass(IndexBackupThread.class);
-    private final static long ONE_DAY_IN_MILLISECOND = 86400000;
+    private static final int MAX_NUMBER_OF_BACKUPS = 14;
+
 
     private final File indexDirectory;
     private final String backupIndexDirectoryString;
@@ -36,12 +36,13 @@ public class IndexBackupThread implements Runnable {
     @Override
     public void run() {
         ScheduledExecutorService execService = Executors.newScheduledThreadPool(5);
-        execService.scheduleAtFixedRate(()-> backupIndex(),ONE_DAY_IN_MILLISECOND, ONE_DAY_IN_MILLISECOND, TimeUnit.MILLISECONDS);
+        execService.scheduleAtFixedRate(() -> backupIndex(), 1, 1, TimeUnit.DAYS);
     }
 
     private void backupIndex() {
         File backupLocation = getBackupDirectory();
         try {
+            deleteOldestBackup();
             FileUtils.copyDirectory(indexDirectory, backupLocation);
         } catch (IOException e) {
             LOGGER.severe("[-] Unable to create index backup: %s", e.getMessage());
@@ -49,10 +50,32 @@ public class IndexBackupThread implements Runnable {
     }
 
     private File getBackupDirectory() {
-        Random random = new Random();
         String timeStamp = new SimpleDateFormat("HH-MM.dd.yyyy").format(new Date());
         File backupIndexDirectoryPath = new File(backupIndexDirectoryString + "/" + timeStamp);
         return backupIndexDirectoryPath;
+    }
+
+    private void deleteOldestBackup() throws IOException {
+        File backupLocation = new File(backupIndexDirectoryString);
+        if (numberOfBackups(backupLocation) > MAX_NUMBER_OF_BACKUPS) {
+            FileUtils.deleteDirectory(getOldestBackupDirectory(backupLocation));
+        }
+    }
+
+    private int numberOfBackups(File backupLocation) {
+        return backupLocation.listFiles().length;
+    }
+
+    private File getOldestBackupDirectory(File backupLocation) {
+        long oldestTime = Long.MAX_VALUE;
+        File oldestBackup = null;
+        for (File backup : backupLocation.listFiles()) {
+            if (backup.lastModified() < oldestTime) {
+                oldestTime = backup.lastModified();
+                oldestBackup = backup;
+            }
+        }
+        return oldestBackup;
     }
 
 
