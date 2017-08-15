@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static spark.Spark.port;
+import static spark.Spark.secure;
 import static spark.Spark.staticFiles;
 
 /**
@@ -53,7 +54,11 @@ public class Application implements SparkApplication {
         Properties serverProp = IOUtils.getPropertyFileObject(propertiesFilePath);
 
         int serverPort;
+        String keystorePath;
+        String keystorePassword;
         try {
+            keystorePath = IOUtils.getPropertyFromPropertiesFile(serverProp, "keystore");
+            keystorePassword = IOUtils.getPropertyFromPropertiesFile(serverProp, "keystorePassword");
             serverPort = Integer.parseInt(IOUtils.getPropertyFromPropertiesFile(serverProp, "serverPort"));
             Module.DB_PASSWORD = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePassword");
             Module.INDEX_DIRECTORY_STRING = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
@@ -64,6 +69,8 @@ public class Application implements SparkApplication {
         }
 
         configureSpark(serverPort);
+        secure(keystorePath, keystorePassword, null, null);
+
         return true;
     }
 
