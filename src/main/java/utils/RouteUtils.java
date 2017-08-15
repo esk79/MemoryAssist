@@ -40,6 +40,7 @@ public class RouteUtils {
                 return "";
             } catch (InvalidParamException e) {
                 response.status(400);
+                response.redirect(request.url());
                 return e.getMessage();
             }
         };

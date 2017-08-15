@@ -51,7 +51,9 @@ fabric.properties
 #Custom
 src/main/resources/properties/server.properties
 src/test/resources
- src/main/resources/index
+src/main/resources/index
+src/main/resources/keys/KeyStore.jks
+
 
 .classpath
 .project

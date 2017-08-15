@@ -19,12 +19,20 @@ public class ResourceAccess extends AbstractAccess {
         super(connectionProvider);
     }
 
-    public Optional<Resource> getResource(int resourceID) throws SQLException {
-        return select(Statements.getResource(resourceID), optional(this::getResource));
+    public Optional<Resource> getResource(String uid) throws SQLException {
+        return select(Statements.getResource(uid), optional(this::getResource));
     }
 
     public void insertResource(Resource resource) throws SQLException {
-        update(Statements.insertResource(resource.getTitle(), resource.getMarkdown()), 1);
+        update(Statements.insertResource(resource.getUid(), resource.getTitle(), resource.getMarkdown()), 1);
+    }
+
+    public void updateResource(Resource resource) throws SQLException {
+        update(Statements.updateResource(resource.getUid(), resource.getTitle(), resource.getMarkdown()), 1);
+    }
+
+    public void deleteResource(String uid) throws SQLException {
+        update(Statements.deleteResource(uid), 1);
     }
 
     private Resource getResource(ResultSet resultSet) throws SQLException {

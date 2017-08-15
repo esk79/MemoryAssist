@@ -17,11 +17,11 @@ public final class Statements {
             + "hash varbinary(2048) NOT NULL"
             + ")";
     public static final String CREATE_RESOURCE_TABLE = "CREATE TABLE IF NOT EXISTS resource ("
-            + "id int NOT NULL AUTO_INCREMENT,"
+            + "uid varchar(64) NOT NULL,"
             + "title varchar(512) NOT NULL,"
             + "markdown text NOT NULL,"
-            + "PRIMARY KEY (id),"
-            + "UNIQUE (title)"
+            + "PRIMARY KEY (uid),"
+            + "UNIQUE (uid)"
             + ")";
 
     public static final String GET_AUTHENTICATOR = "SELECT * FROM authenticator";
@@ -51,19 +51,38 @@ public final class Statements {
     }
 
     //TODO: refactor these
-    public static PreparedStatementProvider insertResource(String title, String markdown) throws SQLException {
-        return provider("INSERT INTO resource (title, markdown) VALUES (?, ?)",
+    public static PreparedStatementProvider insertResource(String uid, String title, String markdown) throws SQLException {
+        return provider("INSERT INTO resource (uid, title, markdown) VALUES (?, ?, ?)",
                 statement -> {
-                    statement.setString(1, title);
-                    statement.setString(2, markdown);
+                    statement.setString(1, uid);
+                    statement.setString(2, title);
+                    statement.setString(3, markdown);
                 }
         );
     }
 
-    public static PreparedStatementProvider getResource(int resourceID)
+    public static PreparedStatementProvider updateResource(String uid, String title, String markdown) throws SQLException {
+        return provider("UPDATE resource SET title = ?, markdown = ? WHERE uid = ?",
+                statement -> {
+                    statement.setString(1, uid);
+                    statement.setString(2, title);
+                    statement.setString(3, markdown);
+                }
+        );
+    }
+
+    public static PreparedStatementProvider deleteResource(String uid) throws SQLException {
+        return provider("DELETE FROM resource WHERE uid = ?",
+                statement -> {
+                    statement.setString(1, uid);
+                }
+        );
+    }
+
+    public static PreparedStatementProvider getResource(String uid)
             throws SQLException {
-        return provider("SELECT * FROM resource WHERE id = ?",
-                statement -> statement.setInt(1, resourceID)
+        return provider("SELECT * FROM resource WHERE uid = ?",
+                statement -> statement.setString(1, uid)
         );
     }
 

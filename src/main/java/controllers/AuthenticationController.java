@@ -10,6 +10,7 @@ import utils.Log;
 import utils.RouteUtils;
 import utils.RouteWrapper;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -40,8 +41,14 @@ public class AuthenticationController extends AbstractController {
         });
     }
 
-    String authenticate(Request request, Response response) throws Exception {
-        String password = RouteUtils.queryParam(request, "password");
+    String authenticate(Request request, Response response) throws SQLException {
+        String password;
+        try {
+            password = RouteUtils.queryParam(request, "password");
+        } catch (RouteUtils.InvalidParamException e) {
+            return RouteUtils.errorRedirect(response, "/authenticate", "No password entered");
+        }
+
         Optional<Authenticator> authenticatorOptional = authenticatorAccess.getAuthenticator();
 
         if (!authenticatorOptional.isPresent()) {

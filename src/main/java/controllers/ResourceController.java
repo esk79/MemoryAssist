@@ -2,6 +2,7 @@ package controllers;
 
 import annotations.IndexDirectoryString;
 import com.google.inject.Inject;
+import dao.ResourceAccess;
 import models.Resource;
 import searchengine.Indexer;
 import searchengine.Searcher;
@@ -13,7 +14,6 @@ import utils.Log;
 import utils.RouteUtils;
 import utils.RouteWrapper;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -27,11 +27,13 @@ public class ResourceController extends AbstractController {
     private final RouteUtils routeUtils;
     private final Indexer indexer;
     private final String indexDirectoryString;
+    private final ResourceAccess resourceAccess;
 
     @Inject
-    public ResourceController(RouteUtils routeUtils, Indexer indexer, @IndexDirectoryString String indexDirectoryString) {
+    public ResourceController(RouteUtils routeUtils, Indexer indexer, ResourceAccess resourceAccess, @IndexDirectoryString String indexDirectoryString) {
         this.routeUtils = routeUtils;
         this.indexer = indexer;
+        this.resourceAccess = resourceAccess;
         this.indexDirectoryString = indexDirectoryString;
     }
 
@@ -40,13 +42,13 @@ public class ResourceController extends AbstractController {
         RouteWrapper routeWrapper = new RouteWrapper();
         path("/add", () -> {
             get("", routeWrapper.templateWrapper(this::addResourceTemplate), new FreeMarkerEngine());
-            post("", "application/json", routeWrapper.routeWrapper(this::addResourceOnPost));
+            post("", "application/json", routeWrapper.routeWrapper(this::addResourceHandler));
         });
         path("/edit", () -> {
             get("/:uid", routeWrapper.templateWrapper(this::editResourceTemplate), new FreeMarkerEngine());
         });
         path("/delete", () -> {
-            get("/:uid", "application/json", routeWrapper.routeWrapper(this::deleteResource));
+            get("/:uid", "application/json", routeWrapper.routeWrapper(this::deleteResourceHandler));
         });
     }
 
@@ -68,7 +70,7 @@ public class ResourceController extends AbstractController {
                 .get();
     }
 
-    String addResourceOnPost(Request request, Response response) {
+    String addResourceHandler(Request request, Response response) {
 
         Optional<Resource> optionalResource = getResourceFromRequest(request);
 
@@ -80,33 +82,20 @@ public class ResourceController extends AbstractController {
 
         Resource resource = optionalResource.get();
 
-        try {
-            if (resource.isUpdate()) indexer.updateResource(resource);
-            else indexer.addNewResource(resource);
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error: %s", e.getMessage());
-            RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
-            response.redirect("/add");
-            return "error";
-        }
+        boolean success = resource.isUpdate() ? updateResource(request, response, resource) :  addResource(request, response, resource);
+        if (!success) return "error";
 
         RouteUtils.successMessage(request, "Resource saved!");
         response.redirect("/add");
         return "ok";
     }
 
-    String deleteResource(Request request, Response response) throws RouteUtils.InvalidParamException {
+    String deleteResourceHandler(Request request, Response response) throws RouteUtils.InvalidParamException {
 
         String uid = RouteUtils.pathParam(request, ":uid");
 
-        try {
-            indexer.deleteResource(uid);
-        } catch (IOException e) {
-            LOGGER.severe("[-] Error: %s", e.getMessage());
-            RouteUtils.errorMessage(request, "Unable to delete resource. Please try again later.");
-            response.redirect(request.url());
-            return "error";
-        }
+        boolean success = deleteResource(request, response, uid);
+        if (!success) return "error";
 
         RouteUtils.successMessage(request, "Resource deleted!");
         response.redirect("/");
@@ -136,5 +125,43 @@ public class ResourceController extends AbstractController {
         return Optional.of(new Resource(title, markdown));
     }
 
+    boolean addResource(Request request, Response response, Resource resource) {
+        try {
+            indexer.addNewResource(resource);
+            resourceAccess.insertResource(resource);
+        } catch (Exception e) {
+            LOGGER.severe("[-] Error: %s", e.getMessage());
+            RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
+            response.redirect("/add");
+            return false;
+        }
+        return true;
+    }
+
+    boolean updateResource(Request request, Response response, Resource resource) {
+        try {
+            indexer.updateResource(resource);
+            resourceAccess.updateResource(resource);
+        } catch (Exception e) {
+            LOGGER.severe("[-] Error: %s", e.getMessage());
+            RouteUtils.errorMessage(request, "Unable to add to index. Please try again later.");
+            response.redirect("/add");
+            return false;
+        }
+        return true;
+    }
+
+    boolean deleteResource(Request request, Response response, String uid) {
+        try {
+            indexer.deleteResource(uid);
+            resourceAccess.deleteResource(uid);
+        } catch (Exception e) {
+            LOGGER.severe("[-] Error: %s", e.getMessage());
+            RouteUtils.errorMessage(request, "Unable to delete resource. Please try again later.");
+            response.redirect("/add");
+            return false;
+        }
+        return true;
+    }
 
 }
