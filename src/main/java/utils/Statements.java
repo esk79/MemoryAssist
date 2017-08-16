@@ -11,9 +11,9 @@ public final class Statements {
     }
 
     // Update statements
-    public static final String DB_NAME = "memoryassist";
+    public static final String DB_NAME = "thalamus";
     public static final String CREATE_AUTHENTICATION_TABLE = "CREATE TABLE IF NOT EXISTS authenticator ("
-            + "salt varbinary(32) NOT NULL,"
+            + "salt varbinary(256) NOT NULL,"
             + "hash varbinary(2048) NOT NULL"
             + ")";
     public static final String CREATE_RESOURCE_TABLE = "CREATE TABLE IF NOT EXISTS resource ("
@@ -42,7 +42,7 @@ public final class Statements {
 
 
     public static PreparedStatementProvider insertAuthentication(byte[] salt, byte[] hashedPassword) throws SQLException {
-        return provider("INSERT INTO authenticator (title, markdown) VALUES (?, ?)",
+        return provider("INSERT INTO authenticator (salt, hash) VALUES (?, ?)",
                 statement -> {
                     statement.setBytes(1, salt);
                     statement.setBytes(2, hashedPassword);

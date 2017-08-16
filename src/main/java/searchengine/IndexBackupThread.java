@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class IndexBackupThread implements Runnable {
     private static final Log LOGGER = Log.forClass(IndexBackupThread.class);
+    private static final int DAYS_BETWEEN_BACKUPS = 7;
     private static final int MAX_NUMBER_OF_BACKUPS = 14;
 
 
@@ -36,7 +37,7 @@ public class IndexBackupThread implements Runnable {
     @Override
     public void run() {
         ScheduledExecutorService execService = Executors.newScheduledThreadPool(5);
-        execService.scheduleAtFixedRate(() -> backupIndex(), 1, 1, TimeUnit.DAYS);
+        execService.scheduleAtFixedRate(() -> backupIndex(), 1, DAYS_BETWEEN_BACKUPS, TimeUnit.DAYS);
     }
 
     private void backupIndex() {

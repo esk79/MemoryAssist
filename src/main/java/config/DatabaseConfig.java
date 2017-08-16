@@ -36,7 +36,7 @@ public final class DatabaseConfig {
 
     public static void setUp(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-           LOGGER.info("[!] Creating tables if not exist");
+            LOGGER.info("[!] Creating tables if not exist");
             statement.executeUpdate(Statements.CREATE_AUTHENTICATION_TABLE);
             statement.executeUpdate(Statements.CREATE_RESOURCE_TABLE);
         }

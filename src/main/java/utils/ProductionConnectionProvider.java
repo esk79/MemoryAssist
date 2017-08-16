@@ -9,7 +9,7 @@ import annotations.DatabasePassword;
 public final class ProductionConnectionProvider extends PooledConnectionProvider {
     private static final String jdbcDriver = "com.mysql.jdbc.Driver";
     private static final String dbHost = "localhost";
-    private static final String dbUser = "root";
+    private static final String dbUser = "developer";
 
     private final String dbPassword;
 
