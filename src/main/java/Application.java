@@ -1,5 +1,6 @@
 import annotations.BackupIndexDirectoryString;
 import annotations.DatabasePassword;
+import annotations.DatabasePort;
 import annotations.IndexDirectoryString;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -60,7 +61,9 @@ public class Application implements SparkApplication {
             keystorePath = IOUtils.getPropertyFromPropertiesFile(serverProp, "keystore");
             keystorePassword = IOUtils.getPropertyFromPropertiesFile(serverProp, "keystorePassword");
             serverPort = Integer.parseInt(IOUtils.getPropertyFromPropertiesFile(serverProp, "serverPort"));
+
             Module.DB_PASSWORD = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePassword");
+            Module.DB_PORT = IOUtils.getPropertyFromPropertiesFile(serverProp, "databasePort");
             Module.INDEX_DIRECTORY_STRING = IOUtils.getPropertyFromPropertiesFile(serverProp, "indexDirectoryPath");
             Module.BACKUP_INDEX_DIRECTORY_STRING = IOUtils.getPropertyFromPropertiesFile(serverProp, "backupIndexDirectoryPath");
         } catch (IOException | NumberFormatException e) {
@@ -85,6 +88,7 @@ public class Application implements SparkApplication {
 
     private static class Module extends AbstractModule {
         private static String DB_PASSWORD = null;
+        private static String DB_PORT = null;
         private static String INDEX_DIRECTORY_STRING = null;
         private static String BACKUP_INDEX_DIRECTORY_STRING = null;
 
@@ -97,6 +101,10 @@ public class Application implements SparkApplication {
                 throw new IllegalStateException("DB_PASSWORD not initialized");
             }
 
+            if (DB_PORT == null) {
+                throw new IllegalStateException("DB_PASSWORD not initialized");
+            }
+
             if (INDEX_DIRECTORY_STRING == null) {
                 throw new IllegalStateException("INDEX_DIRECTORY_STRING not initialized");
             }
@@ -106,6 +114,7 @@ public class Application implements SparkApplication {
             }
 
             bind(String.class).annotatedWith(DatabasePassword.class).toInstance(DB_PASSWORD);
+            bind(String.class).annotatedWith(DatabasePort.class).toInstance(DB_PORT);
             bind(String.class).annotatedWith(IndexDirectoryString.class).toInstance(INDEX_DIRECTORY_STRING);
             bind(String.class).annotatedWith(BackupIndexDirectoryString.class).toInstance(BACKUP_INDEX_DIRECTORY_STRING);
         }

@@ -1,5 +1,6 @@
 package utils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.security.SecureRandom;
@@ -16,6 +17,9 @@ public class CryptographyTest {
 
     private static final Random RANDOM = new SecureRandom();
 
+    @Before
+    public void setUp() throws Exception {
+    }
 
     @Test
     public void testHashEqual() throws Exception {
