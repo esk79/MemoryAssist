@@ -64,9 +64,9 @@ public final class Statements {
     public static PreparedStatementProvider updateResource(String uid, String title, String markdown) throws SQLException {
         return provider("UPDATE resource SET title = ?, markdown = ? WHERE uid = ?",
                 statement -> {
-                    statement.setString(1, uid);
-                    statement.setString(2, title);
-                    statement.setString(3, markdown);
+                    statement.setString(1, title);
+                    statement.setString(2, markdown);
+                    statement.setString(3, uid);
                 }
         );
     }
