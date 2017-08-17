@@ -16,7 +16,7 @@ import utils.LuceneConstants;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by EvanKing on 7/12/17.
@@ -25,8 +25,6 @@ public class Indexer {
     private static final Log LOGGER = Log.forClass(Indexer.class);
 
     private IndexWriter writer;
-
-    //TODO: make sure error handling is at correct level of abstraction because right now it is not
 
     @Inject
     public Indexer(@IndexDirectoryString String indexDirectoryString) throws IOException {
@@ -46,7 +44,7 @@ public class Indexer {
         commit();
     }
 
-    public int createIndex(ArrayList<Resource> resources) throws IOException {
+    public int createIndex(List<Resource> resources) throws IOException {
         for (Resource resource : resources) {
             addNewResource(resource);
         }

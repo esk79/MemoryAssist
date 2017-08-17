@@ -1,5 +1,6 @@
 package searchengine;
 
+import dao.ResourceAccess;
 import models.Resource;
 import org.junit.After;
 import org.junit.Before;
@@ -28,7 +29,6 @@ public class IndexerTest {
         resources.add(resource2);
         resources.add(resource3);
         resources.add(resource4);
-
 
 
         indexer = new Indexer("src/test/resources/index");

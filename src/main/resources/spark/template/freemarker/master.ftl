@@ -49,6 +49,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="/add">Add</a></li>
             </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="/index">Recreate Index</a></li>
+            </ul>
         </div>
         <!--/.nav-collapse -->
     </div>

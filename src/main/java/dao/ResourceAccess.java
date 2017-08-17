@@ -7,6 +7,7 @@ import utils.Statements;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,6 +22,11 @@ public class ResourceAccess extends AbstractAccess {
 
     public Optional<Resource> getResource(String uid) throws SQLException {
         return select(Statements.getResource(uid), optional(this::getResource));
+    }
+
+    public List<Resource> getAllResources() throws SQLException {
+        return select(conn -> conn.prepareStatement(Statements.GET_ALL_RESOURCES),
+                list(this::getResource));
     }
 
     public void insertResource(Resource resource) throws SQLException {

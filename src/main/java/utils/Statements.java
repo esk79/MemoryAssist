@@ -25,6 +25,7 @@ public final class Statements {
             + ")";
 
     public static final String GET_AUTHENTICATOR = "SELECT * FROM authenticator";
+    public static final String GET_ALL_RESOURCES = "Select * FROM resource";
 
     private static PreparedStatementProvider provider(String query,
                                                       Populator populator) throws SQLException {

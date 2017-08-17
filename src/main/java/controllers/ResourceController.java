@@ -14,6 +14,7 @@ import utils.Log;
 import utils.RouteUtils;
 import utils.RouteWrapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.*;
@@ -50,6 +51,9 @@ public class ResourceController extends AbstractController {
         path("/delete", () -> {
             get("/:uid", "application/json", routeWrapper.routeWrapper(this::deleteResourceHandler));
         });
+
+        get("/index", "application/json", routeWrapper.routeWrapper(this::recreateIndex));
+
     }
 
     ModelAndView addResourceTemplate(Request request, Response response) throws Exception {
@@ -98,6 +102,22 @@ public class ResourceController extends AbstractController {
         if (!success) return "error";
 
         RouteUtils.successMessage(request, "Resource deleted!");
+        response.redirect("/");
+        return "ok";
+    }
+
+    String recreateIndex(Request request, Response response) throws RouteUtils.InvalidParamException {
+        try {
+            indexer.deleteAll();
+            List<Resource> resourcesFromDB = resourceAccess.getAllResources();
+            indexer.createIndex(resourcesFromDB);
+        } catch (Exception e) {
+            LOGGER.severe("Error recreating index: %s ", e.getMessage());
+            RouteUtils.errorMessage(request, "Unable to recreate Index.");
+            RouteUtils.redirectTo(response, "/");
+            return "redirected";
+        }
+        RouteUtils.successMessage(request, "Index recreated from Database!");
         response.redirect("/");
         return "ok";
     }

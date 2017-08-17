@@ -4,12 +4,13 @@
 <!-- Page Content -->
 <div class="container">
     <div class="well">
-        <form action="/search" method="get" class="form-inline" role="form">
-            <div class="form-group">
+        <form action="/search" method="get" role="form">
+            <div class="input-group">
                 <input type="search" class="form-control" name="query" placeholder="Enter search terms">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-secondary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
             </div>
-            <button type="submit" id="s" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
-            </button>
         </form>
     </div>
 
