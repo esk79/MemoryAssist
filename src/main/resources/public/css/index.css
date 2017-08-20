@@ -20,7 +20,7 @@ body {
 }
 
 .global-input .form-control {
-    width:180px;
+    width:300px;
 }
 
 .global-input a {
@@ -30,7 +30,7 @@ body {
 
 
 
-@media (min-width:400px){
+@media (max-width:400px){
     .global-input {
         padding: 50px 0;
         text-align:center;
@@ -68,4 +68,6 @@ body {
     padding-right: 10px;
 }
 
-
+.center-input{
+    max-width: 400px;
+}

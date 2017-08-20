@@ -3,7 +3,6 @@
 <@layout.master>
 <!-- Page Content -->
 <div class="container">
-
     <form action="/search" method="get" class="form-inline global-input" role="form">
         <div class="form-group">
             <input type="search" class="form-control" name="query" placeholder="Enter search terms">
@@ -12,7 +11,6 @@
 
         </button>
     </form>
-
 </div>
 
 

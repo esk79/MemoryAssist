@@ -7,7 +7,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import config.DatabaseConfig;
 import controllers.AuthenticationController;
-import controllers.IndexController;
+import controllers.HomeController;
 import controllers.ResourceController;
 import controllers.SearchController;
 import searchengine.IndexBackupCronJob;
@@ -39,7 +39,7 @@ public class Application implements SparkApplication {
         }
 
         Injector injector = Guice.createInjector(new Module());
-        injector.getInstance(IndexController.class).init();
+        injector.getInstance(HomeController.class).init();
         injector.getInstance(AuthenticationController.class).init();
         injector.getInstance(ResourceController.class).init();
         injector.getInstance(SearchController.class).init();
